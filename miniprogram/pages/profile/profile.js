@@ -8,7 +8,9 @@ Page({
     islandCount: 0,
     photoCount: 0,
     cloudReady: false,
-    authorizing: false
+    authorizing: false,
+    draftNickName: '',
+    draftAvatarUrl: ''
   },
 
   onShow() {
@@ -27,44 +29,61 @@ Page({
     })
     app.ensureLogin().then((openid) => {
       this.setData({ cloudReady: Boolean(openid) })
+      if (!openid) return null
+      return cloud.pullProfile()
+    }).then((remoteProfile) => {
+      if (!remoteProfile) return
+      const localProfile = storage.getProfile()
+      if (!localProfile || (remoteProfile.updatedAt || 0) > (localProfile.updatedAt || 0)) {
+        const profile = storage.replaceProfile(remoteProfile)
+        this.setData({
+          profile,
+          draftNickName: profile.nickName,
+          draftAvatarUrl: profile.avatarUrl
+        })
+      } else if ((localProfile.updatedAt || 0) > (remoteProfile.updatedAt || 0)) {
+        cloud.syncProfile(localProfile)
+      }
+    }).catch(() => {})
+    const profile = storage.getProfile()
+    this.setData({
+      draftNickName: profile ? profile.nickName : '',
+      draftAvatarUrl: profile ? profile.avatarUrl : ''
     })
   },
 
-  onAuthorize() {
+  onChooseAvatar(e) {
+    const avatarUrl = e.detail && e.detail.avatarUrl
+    if (avatarUrl) this.setData({ draftAvatarUrl: avatarUrl })
+  },
+
+  onNickNameInput(e) {
+    this.setData({ draftNickName: e.detail.value })
+  },
+
+  onSaveProfile() {
     if (this.data.authorizing) return
-    if (!wx.getUserProfile) {
-      util.toast('当前微信版本不支持授权，请升级微信后重试')
+    const nickName = (this.data.draftNickName || '').trim()
+    if (!nickName) {
+      util.toast('请填写昵称')
       return
     }
     this.setData({ authorizing: true })
-    wx.getUserProfile({
-      desc: '用于展示您的微信头像和昵称',
-      success: (res) => {
-        const userInfo = res.userInfo || {}
-        storage.saveProfile({
-          nickName: userInfo.nickName || '微信用户',
-          avatarUrl: userInfo.avatarUrl || ''
-        })
-        getApp()
-          .ensureLogin()
-          .then(() => {
-            this.setData({ authorizing: false })
-            this.refresh()
-            util.toast('微信授权成功', 'success')
-          })
-          .catch(() => {
-            this.setData({ authorizing: false })
-            this.refresh()
-            util.toast('资料已授权，本地模式可继续使用')
-          })
-      },
-      fail: (err) => {
-        this.setData({ authorizing: false })
-        if (!/cancel/i.test((err && err.errMsg) || '')) {
-          util.toast('授权未完成，请稍后重试')
-        }
-      }
+    const profile = storage.saveProfile({
+      nickName,
+      avatarUrl: this.data.draftAvatarUrl || ''
     })
+    getApp()
+      .ensureLogin()
+      .then((openid) => (openid ? cloud.syncProfile(profile) : { ok: false }))
+      .then((result) => {
+        this.setData({ authorizing: false, profile })
+        util.toast(result.ok ? '资料已保存并同步' : '资料已保存到本机', result.ok ? 'success' : 'none')
+      })
+      .catch(() => {
+        this.setData({ authorizing: false, profile })
+        util.toast('资料已保存到本机')
+      })
   },
 
   goIslands() {
@@ -85,9 +104,9 @@ Page({
       return
     }
     wx.showLoading({ title: '同步中', mask: true })
-    cloud.syncAll().then((res) => {
+    Promise.all([cloud.syncAll(), cloud.syncProfile(storage.getProfile())]).then(([res, profileRes]) => {
       wx.hideLoading()
-      if (res.ok) {
+      if (res.ok && profileRes.ok) {
         this.refresh()
         util.toast('云端同步完成', 'success')
       } else {

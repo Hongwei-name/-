@@ -1,0 +1,9 @@
+{
+  "name": "syncProfile",
+  "version": "1.0.0",
+  "description": "行屿 - 用户资料同步",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

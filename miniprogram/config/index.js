@@ -24,7 +24,7 @@ module.exports = {
   AMAP_KEY: privateConfig.AMAP_KEY || 'YOUR_AMAP_WEB_KEY',
 
   // 微信云开发环境 ID（留空使用默认环境）
-  CLOUD_ENV: '',
+  CLOUD_ENV: 'cloud1-d9gdn6fg4ebd718a4',
 
   // 照片自动归集的匹配半径（米）：照片 GPS 与已标记小岛距离在此范围内才自动归集
   MATCH_RADIUS_M: 1000,
@@ -37,6 +37,7 @@ module.exports = {
     LOGIN: 'login',
     SYNC_ISLANDS: 'syncIslands',
     SYNC_PHOTOS: 'syncPhotos',
+    SYNC_PROFILE: 'syncProfile',
     INIT_DB: 'initDB'
   }
 }

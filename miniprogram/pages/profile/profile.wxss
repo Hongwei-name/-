@@ -17,10 +17,17 @@
 .avatar {
   width: 100rpx;
   height: 100rpx;
+  min-width: 100rpx;
+  margin: 0;
+  padding: 0;
   flex-shrink: 0;
   overflow: hidden;
   border-radius: 50%;
   background: #E4F3F2;
+}
+
+.avatar::after {
+  border: none;
 }
 
 .avatar-image {
@@ -61,12 +68,18 @@
 }
 
 .profile-name {
+  display: block;
+  width: 100%;
+  height: 46rpx;
+  padding: 0;
   color: #FFFFFF;
   font-size: 34rpx;
   font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 46rpx;
+}
+
+.profile-name-placeholder {
+  color: #A8C0C0;
 }
 
 .profile-status {

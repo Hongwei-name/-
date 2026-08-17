@@ -223,6 +223,18 @@ function saveProfile(profile) {
   return value
 }
 
+/** 使用云端资料覆盖本地缓存，保留云端的更新时间用于后续冲突比较。 */
+function replaceProfile(profile) {
+  if (!profile) return null
+  const value = {
+    nickName: profile.nickName || '',
+    avatarUrl: profile.avatarUrl || '',
+    updatedAt: profile.updatedAt || Date.now()
+  }
+  write(KEYS.PROFILE, value)
+  return value
+}
+
 /* ---------------- 同步辅助 ---------------- */
 
 /** 取待同步删除记录（取后清空） */
@@ -265,6 +277,7 @@ module.exports = {
   clearHistory,
   getProfile,
   saveProfile,
+  replaceProfile,
   takeDeleted,
   putBackDeleted,
   replaceAll

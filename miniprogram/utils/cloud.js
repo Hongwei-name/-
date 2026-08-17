@@ -115,6 +115,25 @@ function pullAndMerge() {
   })
 }
 
+/** 上传当前用户资料；资料仅由当前 OpenID 对应的云函数记录访问。 */
+function syncProfile(profile) {
+  if (!profile) return Promise.resolve({ ok: true, skipped: true })
+  return ensureLogin().then((openid) => {
+    if (!openid) return { ok: false, reason: 'not-logged-in' }
+    return callFn(config.CLOUD_FN.SYNC_PROFILE, { op: 'push', profile })
+      .then(() => ({ ok: true }))
+      .catch((err) => ({ ok: false, reason: (err && err.message) || 'sync-failed' }))
+  })
+}
+
+/** 拉取当前 OpenID 的资料，用于新设备恢复昵称和头像。 */
+function pullProfile() {
+  return ensureLogin().then((openid) => {
+    if (!openid) return null
+    return callFn(config.CLOUD_FN.SYNC_PROFILE, { op: 'pull' }).then((res) => res.profile || null)
+  })
+}
+
 /** 同步当前是否可用 */
 function isAvailable() {
   return app().globalData.cloudReady
@@ -126,5 +145,7 @@ module.exports = {
   ensureLogin,
   callFn,
   mergeByUpdatedAt,
-  normalizeRemoteList
+  normalizeRemoteList,
+  syncProfile,
+  pullProfile
 }

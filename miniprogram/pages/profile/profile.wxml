@@ -2,19 +2,19 @@
   <top-nav title="我的" />
 
   <view class="profile-hero">
-    <view class="avatar" bindtap="onAuthorize">
-      <image wx:if="{{profile && profile.avatarUrl}}" class="avatar-image" src="{{profile.avatarUrl}}" mode="aspectFill" />
+    <button class="avatar" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择微信头像">
+      <image wx:if="{{draftAvatarUrl}}" class="avatar-image" src="{{draftAvatarUrl}}" mode="aspectFill" />
       <view wx:else class="avatar-placeholder">
         <view class="avatar-head"></view>
         <view class="avatar-body"></view>
       </view>
-    </view>
+    </button>
     <view class="profile-copy">
-      <view class="profile-name">{{profile ? profile.nickName : '微信用户'}}</view>
-      <view class="profile-status">{{profile ? (cloudReady ? '已授权并开启云端同步' : '已授权，本地数据安全保存') : '授权后展示微信头像和昵称'}}</view>
+      <input class="profile-name" type="nickname" value="{{draftNickName}}" placeholder="填写昵称" placeholder-class="profile-name-placeholder" bindinput="onNickNameInput" maxlength="20" />
+      <view class="profile-status">{{profile ? (cloudReady ? '资料已同步至云端' : '资料已保存到本机') : '选择头像并填写昵称后保存'}}</view>
     </view>
-    <button class="profile-action" bindtap="onAuthorize" loading="{{authorizing}}">
-      {{profile ? '更新资料' : '微信授权'}}
+    <button class="profile-action" bindtap="onSaveProfile" loading="{{authorizing}}">
+      {{profile ? '保存资料' : '完成资料'}}
     </button>
   </view>
 
