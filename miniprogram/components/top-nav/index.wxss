@@ -1,0 +1,108 @@
+@import "/styles/iconfont.wxss";
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.985);
+  border-bottom: 1rpx solid #E4EEEE;
+  box-sizing: border-box;
+}
+
+.nav-content {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding-left: 24rpx;
+  box-sizing: border-box;
+}
+
+.nav-home .nav-content {
+  padding-left: 40rpx;
+}
+
+.nav-back {
+  width: 72rpx;
+  height: 72rpx;
+  margin-left: -12rpx;
+  margin-right: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0E7784;
+  flex-shrink: 0;
+}
+
+.nav-back-icon {
+  font-size: 42rpx;
+}
+
+.nav-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #15232B;
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.nav-title-group {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.nav-brand-mark {
+  width: 10rpx;
+  height: 34rpx;
+  margin-right: 16rpx;
+  background: #D07A45;
+  border-radius: 6rpx;
+  flex-shrink: 0;
+}
+
+.nav-search {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  height: 72rpx;
+  min-width: 0;
+  padding: 0 18rpx;
+  border: 1rpx solid #D8E6E5;
+  border-radius: 12rpx;
+  background: #F8FBFA;
+}
+
+.nav-search-icon {
+  margin-right: 12rpx;
+  color: #0E7784;
+  font-size: 28rpx;
+}
+
+.nav-search-input {
+  flex: 1;
+  min-width: 0;
+  height: 68rpx;
+  color: #15232B;
+  font-size: 26rpx;
+}
+
+.nav-search-placeholder {
+  color: #8A98A5;
+}
+
+.nav-search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34rpx;
+  height: 34rpx;
+  margin-left: 8rpx;
+  border-radius: 50%;
+  background: #D9E5E4;
+  color: #FFFFFF;
+  font-size: 22rpx;
+  line-height: 1;
+}

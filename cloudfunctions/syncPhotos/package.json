@@ -1,0 +1,9 @@
+{
+  "name": "syncPhotos",
+  "version": "1.0.0",
+  "description": "行屿 - 照片关联数据云端同步",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

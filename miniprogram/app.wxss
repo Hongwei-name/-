@@ -1,0 +1,149 @@
+/**
+ * 行屿 - 全局样式
+ * 主题：海洋绿 + 墨色 + 珊瑚强调
+ */
+@import "/styles/iconfont.wxss";
+
+page {
+  --primary: #0E7784;
+  --primary-light: #E4F3F2;
+  --success: #2E8B70;
+  --warning: #C98232;
+  --danger: #C95A50;
+  --text-main: #15232B;
+  --text-sub: #52616D;
+  --text-light: #8A98A5;
+  --bg-page: #F4F8F8;
+  --bg-card: #FFFFFF;
+  --radius-lg: 16rpx;
+  --radius-md: 12rpx;
+  --radius-sm: 8rpx;
+  --shadow-card: 0 3rpx 16rpx rgba(21, 35, 43, 0.055);
+
+  background: var(--bg-page);
+  color: var(--text-main);
+  font-size: 28rpx;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+view, text, image, button, input, scroll-view {
+  box-sizing: border-box;
+}
+
+/* 通用卡片 */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 32rpx;
+  margin: 20rpx 24rpx;
+}
+
+/* 通用按钮 */
+.btn {
+  border-radius: var(--radius-md);
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 1;
+  padding: 22rpx 0;
+  text-align: center;
+}
+.btn::after {
+  border: none;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+.btn-ghost {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.btn-danger {
+  background: #FDECEB;
+  color: var(--danger);
+}
+.btn-disabled {
+  background: #E4E8F0;
+  color: #B6BECB;
+}
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* 区块标题 */
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--text-main);
+  padding: 8rpx 4rpx;
+}
+
+/* 次要文字 */
+.text-sub {
+  color: var(--text-sub);
+  font-size: 26rpx;
+}
+.text-light {
+  color: var(--text-light);
+  font-size: 24rpx;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+.empty-icon {
+  font-size: 72rpx;
+  margin-bottom: 24rpx;
+  color: #B6C2D6;
+}
+.empty-text {
+  color: var(--text-light);
+  font-size: 28rpx;
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background: #EEF1F6;
+  margin: 20rpx 0;
+}
+
+/* 小标签 */
+.tag {
+  display: inline-block;
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 999rpx;
+  background: var(--primary-light);
+  color: var(--primary);
+  margin-right: 12rpx;
+}
+
+/* Shared visual polish */
+.btn-primary {
+  box-shadow: 0 6rpx 14rpx rgba(14, 119, 132, 0.18);
+}
+
+.btn-ghost {
+  border: 1rpx solid #CFE7E5;
+}
+
+.btn-danger {
+  border: 1rpx solid #F1D4D0;
+}
+.tag-warn {
+  background: #FDF3E3;
+  color: var(--warning);
+}
+
+/* 底部安全区留白 */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

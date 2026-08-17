@@ -1,0 +1,16 @@
+<view wx:if="{{visible}}" class="tab-bar">
+  <view
+    wx:for="{{list}}"
+    wx:key="path"
+    class="tab-item {{selected === index ? 'active' : ''}}"
+    data-index="{{index}}"
+    data-path="{{item.path}}"
+    bindtap="onTap"
+  >
+    <view class="tab-icon-wrap">
+      <view wx:if="{{item.type === 'profile'}}" class="profile-tab-icon"></view>
+      <text wx:else class="iconfont {{item.icon}} tab-icon"></text>
+    </view>
+    <text class="tab-text">{{item.text}}</text>
+  </view>
+</view>

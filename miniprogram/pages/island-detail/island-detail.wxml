@@ -1,0 +1,66 @@
+<view class="page">
+  <top-nav title="小岛详情" show-back="{{true}}" bindback="onBack" />
+  <block wx:if="{{island}}">
+    <!-- 基本信息 -->
+    <view class="card">
+      <view class="title-row">
+        <text class="iconfont icon-island title-icon"></text>
+        <text class="title">{{island.name}}</text>
+        <text wx:if="{{photos.length}}" class="tag">照片 {{photos.length}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">地址</text>
+        <text class="info-value">{{island.address || '暂无'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">标记时间</text>
+        <text class="info-value">{{island.createdAtText}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">备注</text>
+        <text class="info-value">{{island.remark || '暂无'}}</text>
+      </view>
+      <view class="action-row">
+        <button class="btn btn-ghost act" bindtap="onEdit">编辑</button>
+        <button class="btn btn-ghost act" bindtap="onRoute">路线规划</button>
+        <button class="btn btn-danger act" bindtap="onDelete">删除小岛</button>
+      </view>
+    </view>
+
+    <!-- 照片集合 -->
+    <view class="card">
+      <view class="photo-head">
+        <text class="section-title">归集照片</text>
+        <view class="add-btn" bindtap="onAddPhotos">＋ 添加照片</view>
+      </view>
+
+      <view wx:if="{{photos.length}}" class="photo-grid">
+        <view
+          wx:for="{{photos}}"
+          wx:key="id"
+          class="photo-item"
+          data-index="{{index}}"
+          bindtap="onPreview"
+          bindlongpress="onRemovePhoto"
+        >
+          <image class="photo-img" src="{{item.localPath}}" mode="aspectFill" />
+          <view wx:if="{{item.exifLng}}" class="photo-gps">
+            <text class="iconfont icon-locate gps-icon"></text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:else class="photo-empty">
+        <text class="iconfont icon-photo photo-empty-icon"></text>
+        <view class="photo-empty-text">还没有归集照片</view>
+        <view class="photo-empty-sub">自动归集：从相册导入带 GPS 的照片，自动匹配到这座小岛；也可以直接手动添加照片。</view>
+      </view>
+      <view class="photo-tip">长按照片可移除归集（仅解除关联，不删除原图）</view>
+    </view>
+  </block>
+
+  <view wx:else class="empty">
+    <text class="iconfont icon-island empty-icon"></text>
+    <view class="empty-text">小岛不存在或已被删除</view>
+  </view>
+</view>

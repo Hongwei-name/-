@@ -1,0 +1,58 @@
+<view class="page">
+  <top-nav title="全部小岛路线" show-back="{{true}}" bindback="onBack" />
+
+  <map
+    id="tourMap"
+    class="map"
+    latitude="{{center.lat}}"
+    longitude="{{center.lng}}"
+    scale="{{12}}"
+    markers="{{markers}}"
+    polyline="{{polylines}}"
+  />
+
+  <view class="route-panel">
+    <view class="route-summary">
+      <view>
+        <view class="summary-kicker">从当前位置依次到访</view>
+        <view class="summary-value">{{hasRoute ? stops.length + ' 座小岛' : '等待计算'}}</view>
+      </view>
+      <view wx:if="{{hasRoute}}" class="summary-stats">
+        <text>{{totalDistanceText}}</text>
+        <text class="summary-dot">·</text>
+        <text>{{totalDurationText}}</text>
+      </view>
+    </view>
+
+    <view class="mode-row">
+      <view
+        wx:for="{{modes}}"
+        wx:key="mode"
+        class="mode {{mode === item.mode ? 'mode-active' : ''}}"
+        data-mode="{{item.mode}}"
+        bindtap="onModeChange"
+      >
+        <text class="iconfont {{item.icon}} mode-icon"></text>{{item.label}}
+      </view>
+    </view>
+    <view class="route-actions">
+      <button class="replan-btn" bindtap="planTour" loading="{{planning}}">重新计算</button>
+      <button class="navigate-btn" bindtap="onStartNavigation">{{hasRoute ? '导航到第 1 站' : '开始导航'}}</button>
+    </view>
+  </view>
+
+  <view wx:if="{{hasRoute}}" class="stops-section">
+    <view class="stops-heading">到访顺序</view>
+    <view wx:for="{{stops}}" wx:key="id" class="stop-item">
+      <view class="stop-number">{{item.order}}</view>
+      <view class="stop-main">
+        <text class="stop-name">{{item.name}}</text>
+        <text class="stop-address">{{item.address || '暂无地址'}}</text>
+      </view>
+      <view class="stop-meta">
+        <text>{{item.distanceText}}</text>
+        <text>{{item.durationText}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,24 @@
+<view class="nav {{largeInset ? 'nav-home' : ''}}" style="height: {{navHeight}}px; padding-top: {{statusBarHeight}}px;">
+  <view class="nav-content" style="padding-right: {{menuRight}}px;">
+    <view wx:if="{{showBack}}" class="nav-back" bindtap="onBack" aria-label="返回">
+      <text class="iconfont icon-back nav-back-icon"></text>
+    </view>
+    <view wx:if="{{searchMode}}" class="nav-search">
+      <text class="iconfont icon-search nav-search-icon"></text>
+      <input
+        class="nav-search-input"
+        placeholder="{{placeholder}}"
+        placeholder-class="nav-search-placeholder"
+        value="{{keyword}}"
+        confirm-type="search"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+      />
+      <view wx:if="{{keyword}}" class="nav-search-clear" bindtap="onSearchClear">×</view>
+    </view>
+    <view wx:else class="nav-title-group">
+      <view wx:if="{{!showBack}}" class="nav-brand-mark"></view>
+      <text class="nav-title">{{title}}</text>
+    </view>
+  </view>
+</view>

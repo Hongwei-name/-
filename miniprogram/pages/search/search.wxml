@@ -1,0 +1,124 @@
+<view class="page">
+  <top-nav
+    show-back="{{true}}"
+    search-mode="{{true}}"
+    keyword="{{keyword}}"
+    placeholder="搜索景点、地名、地标"
+    bindback="onBackToMap"
+    bindsearchinput="onInput"
+    bindsearchconfirm="onSearch"
+    bindsearchclear="onClearKeyword"
+  />
+
+  <!-- ======= 默认态：搜索历史优先，其次附近景点推荐 ======= -->
+  <block wx:if="{{!searched}}">
+    <!-- 搜索历史：进入发现页即可继续上次搜索 -->
+    <view wx:if="{{history.length}}" class="card history-card">
+      <view class="history-head">
+        <text class="section-title">搜索历史</text>
+        <text class="clear-link" bindtap="onClearHistory">清空</text>
+      </view>
+      <view class="history-list">
+        <view
+          wx:for="{{history}}"
+          wx:key="keyword"
+          class="chip"
+          data-kw="{{item.keyword}}"
+          bindtap="onHistoryTap"
+        >{{item.keyword}}</view>
+      </view>
+    </view>
+
+    <view class="nearby-head">
+      <text class="section-title">附近景点</text>
+      <view class="nearby-refresh" bindtap="loadNearby">
+        <text class="iconfont icon-refresh nearby-refresh-icon"></text>
+        <text>刷新</text>
+      </view>
+    </view>
+
+    <!-- 无定位引导 -->
+    <view wx:if="{{!hasLocation && !nearbyLoading}}" class="card loc-guide">
+      <text class="iconfont icon-locate loc-guide-icon"></text>
+      <view class="loc-guide-text">开启定位，查看附近的景点</view>
+      <button class="btn btn-primary loc-guide-btn" bindtap="onEnableLocation">去开启定位</button>
+    </view>
+
+    <!-- 加载中 -->
+    <view wx:if="{{nearbyLoading}}" class="loading">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">正在获取附近景点…</text>
+    </view>
+
+    <!-- 附近景点列表 -->
+    <view wx:if="{{nearby.length}}" class="nearby-list">
+      <view
+        wx:for="{{nearby}}"
+        wx:key="id"
+        class="result-item"
+        data-index="{{index}}"
+        data-from="nearby"
+        bindtap="onItemTap"
+      >
+        <view class="result-main">
+          <view class="result-name">{{item.name}}</view>
+          <view class="result-addr">{{item.address}}</view>
+          <view class="result-meta">
+            <text class="result-distance">{{item.distanceText}}</text>
+            <text wx:if="{{item.ratingText}}" class="result-rating">{{item.ratingText}}</text>
+          </view>
+        </view>
+        <view class="result-ops">
+          <view class="op" catchtap="onMark" data-index="{{index}}" data-from="nearby">标记</view>
+          <view class="op op-route" catchtap="onRoute" data-index="{{index}}" data-from="nearby">路线</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 附近空态 -->
+    <view
+      wx:if="{{hasLocation && nearbyLoaded && !nearbyLoading && !nearby.length}}"
+      class="empty"
+    >
+      <text class="iconfont icon-globe empty-icon"></text>
+      <view class="empty-text">附近暂无景点，试试扩大搜索范围</view>
+    </view>
+
+  </block>
+
+  <!-- ======= 搜索态：结果列表 ======= -->
+  <block wx:else>
+    <view wx:if="{{results.length}}" class="results">
+      <view class="result-count">
+        <text class="result-count-num">{{results.length}}</text>
+        <text class="result-count-label">处结果</text>
+      </view>
+      <view
+        wx:for="{{results}}"
+        wx:key="id"
+        class="result-item"
+        data-index="{{index}}"
+        bindtap="onItemTap"
+      >
+        <view class="result-main">
+          <view class="result-name">{{item.name}}</view>
+          <view class="result-addr">{{item.address}}</view>
+          <view class="result-meta">{{item.distanceText}}</view>
+        </view>
+        <view class="result-ops">
+          <view class="op" catchtap="onMark" data-index="{{index}}">标记</view>
+          <view class="op op-route" catchtap="onRoute" data-index="{{index}}">路线</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{searching}}" class="loading">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">搜索中…</text>
+    </view>
+    <view wx:elif="{{!results.length}}" class="empty">
+      <text class="iconfont icon-globe empty-icon"></text>
+      <view class="empty-text">没有找到相关地点，换个关键词试试</view>
+    </view>
+  </block>
+</view>

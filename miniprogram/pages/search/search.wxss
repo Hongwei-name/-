@@ -1,0 +1,262 @@
+/* 搜索页 */
+.page {
+  min-height: 100vh;
+  padding-top: 16rpx;
+  padding-bottom: calc(152rpx + env(safe-area-inset-bottom));
+}
+
+.card {
+  margin-top: 20rpx;
+}
+
+.history-card {
+  margin-bottom: 8rpx;
+}
+
+/* 历史 */
+.history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clear-link {
+  color: #9AA3B2;
+  font-size: 24rpx;
+}
+
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16rpx;
+}
+
+.chip {
+  font-size: 26rpx;
+  color: #6B7686;
+  background: #F2F4F9;
+  border-radius: 999rpx;
+  padding: 12rpx 28rpx;
+  margin: 0 16rpx 16rpx 0;
+}
+
+/* 结果 */
+.results {
+  padding: 8rpx 24rpx 40rpx;
+}
+
+.result-count {
+  font-size: 24rpx;
+  color: #9AA3B2;
+  padding: 16rpx 8rpx;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(31, 39, 51, 0.05);
+}
+
+.result-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1F2733;
+}
+
+.result-addr {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: #6B7686;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-meta {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #9AA3B2;
+}
+
+.result-ops {
+  display: flex;
+  flex-direction: column;
+  margin-left: 16rpx;
+}
+
+.op {
+  font-size: 24rpx;
+  color: #2B5CD9;
+  background: #EAF0FF;
+  border-radius: 10rpx;
+  padding: 10rpx 24rpx;
+  margin-top: 10rpx;
+  text-align: center;
+}
+
+.op-route {
+  color: #2FA96B;
+  background: #E7F6EE;
+}
+
+.loading {
+  text-align: center;
+  color: #9AA3B2;
+  padding: 80rpx 0;
+  font-size: 26rpx;
+}
+
+.clear-link {
+  color: #0E7784;
+}
+
+.results {
+  padding: 12rpx 24rpx 48rpx;
+}
+
+.result-count {
+  color: #718087;
+  padding: 20rpx 4rpx 14rpx;
+}
+
+.result-item {
+  border-radius: 16rpx;
+  border: 1rpx solid #E1ECEB;
+  box-shadow: none;
+  padding: 28rpx;
+  margin-bottom: 14rpx;
+}
+
+.result-name {
+  color: #15232B;
+}
+
+.op {
+  color: #0E7784;
+  background: #E4F3F2;
+  border-radius: 8rpx;
+}
+
+.op-route {
+  color: #B06B2D;
+  background: #F9EFE3;
+}
+
+.result-count {
+  display: flex;
+  align-items: baseline;
+  padding: 24rpx 4rpx 16rpx;
+}
+
+.result-count-num {
+  color: #15232B;
+  font-size: 52rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.result-count-label {
+  margin-left: 10rpx;
+  color: #718087;
+  font-size: 24rpx;
+}
+
+/* ===== 附近景点推荐 ===== */
+.nearby-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx 8rpx;
+}
+
+.nearby-refresh {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #0E7784;
+  background: #E4F3F2;
+  border-radius: 999rpx;
+  padding: 10rpx 22rpx;
+}
+
+.nearby-refresh-icon {
+  font-size: 24rpx;
+  margin-right: 6rpx;
+  vertical-align: -2rpx;
+}
+
+.nearby-list {
+  padding: 8rpx 24rpx 40rpx;
+}
+
+/* 无定位引导 */
+.loc-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 40rpx;
+}
+
+.loc-guide-icon {
+  font-size: 64rpx;
+  color: #B6C2D6;
+}
+
+.loc-guide-text {
+  margin-top: 20rpx;
+  color: #718087;
+  font-size: 28rpx;
+}
+
+.loc-guide-btn {
+  margin-top: 32rpx;
+  width: 320rpx;
+  background: #0E7784;
+}
+
+/* 加载中 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 0;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 5rpx solid #E1ECEB;
+  border-top-color: #0E7784;
+  border-radius: 50%;
+  animation: nearby-spin 0.8s linear infinite;
+}
+
+@keyframes nearby-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  margin-top: 20rpx;
+  color: #9AA3B2;
+  font-size: 25rpx;
+}
+
+/* 评分 / 距离 */
+.result-distance {
+  margin-right: 16rpx;
+}
+
+.result-rating {
+  color: #B06B2D;
+}

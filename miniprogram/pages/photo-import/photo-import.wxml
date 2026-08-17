@@ -1,0 +1,70 @@
+<view class="page">
+  <top-nav title="照片归集" show-back="{{true}}" bindback="onBack" />
+  <!-- 说明 -->
+  <view class="card intro">
+    <view class="intro-title">
+      <text class="iconfont icon-photo-add intro-icon"></text>
+      {{fixedIsland ? '添加照片到小岛' : '照片自动归集'}}
+    </view>
+    <view class="intro-text" wx:if="{{fixedIsland}}">
+      将相册照片添加到「{{fixedIsland.name}}」。本模式不依赖照片位置信息，直接归集。
+    </view>
+    <view class="intro-text" wx:else>
+      从相册选择照片，自动读取 EXIF 拍摄位置并匹配到已标记的小岛；无位置信息或匹配失败的照片可手动归类。
+    </view>
+  </view>
+
+  <!-- 选择照片 -->
+  <view wx:if="{{!results.length}}" class="choose-wrap">
+    <button class="btn btn-primary choose-btn" bindtap="onChoose" loading="{{analyzing}}" disabled="{{analyzing || saving}}">从相册选择照片</button>
+    <view class="choose-tip">选择原图可提高位置识别成功率</view>
+  </view>
+
+  <!-- 解析中 -->
+  <view wx:if="{{analyzing}}" class="analyzing">
+    <view class="analyzing-spinner"></view>
+    <view class="analyzing-text">正在解析照片位置信息…</view>
+  </view>
+
+  <!-- 结果列表 -->
+  <view wx:if="{{results.length && !analyzing}}" class="results">
+    <view class="result-summary">
+      已选 {{results.length}} 张，自动匹配 {{matchedCount}} 张
+    </view>
+    <view wx:for="{{results}}" wx:key="index" class="result-item">
+      <image class="thumb" src="{{item.path}}" mode="aspectFill" />
+      <view class="result-main">
+        <view class="status">
+          <text wx:if="{{item.status === 'matched'}}" class="status-ok">
+            <text class="iconfont icon-check status-icon"></text>自动匹配：{{item.matchedIsland.name}}
+          </text>
+          <text wx:elif="{{item.status === 'no-gps'}}" class="status-warn">
+            <text class="iconfont icon-info status-icon"></text>未检测到位置信息
+          </text>
+          <text wx:else class="status-warn">未匹配到小岛{{item.distText}}</text>
+        </view>
+        <view wx:if="{{item.shotTimeText}}" class="shot">拍摄于 {{item.shotTimeText}}</view>
+        <view wx:if="{{item.locationName}}" class="photo-location">
+          <text class="iconfont icon-locate photo-location-icon"></text>{{item.locationName}}
+        </view>
+        <picker
+          mode="selector"
+          range="{{islandNames}}"
+          value="{{item.pickIndex}}"
+          data-index="{{index}}"
+          bindchange="onPickChange"
+        >
+          <view class="pick {{item.pickIndex > 0 ? 'pick-active' : ''}}">
+            {{item.pickIndex > 0 ? item.islandName : '选择归属小岛（可选）'}} ▾
+          </view>
+        </picker>
+      </view>
+    </view>
+    <button
+      class="btn btn-primary save-btn {{saveCount ? '' : 'btn-disabled'}}"
+      bindtap="onSave"
+      loading="{{saving}}"
+      disabled="{{!saveCount || saving}}"
+    >{{saveCount ? '保存 ' + saveCount + ' 张归集' : '请先选择归属'}}</button>
+  </view>
+</view>

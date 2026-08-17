@@ -1,0 +1,245 @@
+/* 地图首页 */
+.page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #E8ECF4;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.top-navigation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+}
+
+/* 顶部搜索栏：为右上角小程序胶囊按钮预留空间 */
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  padding-bottom: 8rpx;
+  box-sizing: border-box;
+  z-index: 20;
+}
+
+.search-entry {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 48rpx;
+  box-shadow: 0 4rpx 20rpx rgba(31, 39, 51, 0.10);
+  padding: 26rpx 36rpx;
+  color: #9AA3B2;
+  font-size: 27rpx;
+}
+
+.search-icon {
+  margin-right: 16rpx;
+  font-size: 32rpx;
+  color: #B6BECB;
+}
+
+.search-placeholder {
+  flex: 1;
+}
+
+/* 定位中：小型 loading 菊花（搜索栏右侧，不占大块区域） */
+.loc-spinner {
+  width: 32rpx;
+  height: 32rpx;
+  border: 4rpx solid #E4E8F0;
+  border-top-color: #0E7784;
+  border-radius: 50%;
+  animation: loc-spin 0.8s linear infinite;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+@keyframes loc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 右下操作按钮：圆形简约，垂直堆叠，边缘安全边距 */
+.fab-group {
+  position: absolute;
+  right: 28rpx;
+  bottom: calc(180rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 20;
+}
+
+.fab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6rpx 20rpx rgba(31, 39, 51, 0.14);
+  margin-top: 24rpx;
+  color: #2B5CD9;
+}
+
+.fab-icon {
+  font-size: 40rpx;
+  line-height: 1.2;
+}
+
+/* 底部面板 */
+.panel-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 30;
+}
+
+.panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 16rpx 32rpx 32rpx;
+  z-index: 31;
+  box-shadow: 0 -8rpx 32rpx rgba(31, 39, 51, 0.12);
+}
+
+.panel-handle {
+  width: 72rpx;
+  height: 8rpx;
+  border-radius: 999rpx;
+  background: #E4E8F0;
+  margin: 8rpx auto 24rpx;
+}
+
+.panel-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1F2733;
+}
+
+.panel-addr {
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  color: #6B7686;
+  word-break: break-all;
+}
+
+.panel-meta {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #9AA3B2;
+}
+
+.nearby {
+  margin-top: 20rpx;
+}
+
+.nearby-title {
+  font-size: 24rpx;
+  color: #6B7686;
+  margin-bottom: 12rpx;
+}
+
+.nearby-scroll {
+  white-space: nowrap;
+  width: 100%;
+}
+
+.nearby-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.chip {
+  display: inline-block;
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: #6B7686;
+  background: #F4F6FB;
+  border-radius: 999rpx;
+  padding: 12rpx 24rpx;
+  margin-right: 16rpx;
+  border: 1rpx solid transparent;
+}
+
+.chip-active {
+  color: #2B5CD9;
+  background: #EAF0FF;
+  border-color: #2B5CD9;
+}
+
+.panel-actions {
+  display: flex;
+  margin-top: 28rpx;
+  flex-wrap: wrap;
+}
+
+.act {
+  flex: 1;
+  margin: 8rpx;
+  min-width: 200rpx;
+}
+
+/* Map control surface */
+.search-entry {
+  border-radius: 16rpx;
+  border: 1rpx solid rgba(214, 230, 229, 0.92);
+  box-shadow: 0 8rpx 22rpx rgba(21, 35, 43, 0.10);
+  padding: 22rpx 28rpx;
+  color: #718087;
+}
+
+.search-icon,
+.fab {
+  color: #0E7784;
+}
+
+.fab {
+  width: 92rpx;
+  height: 92rpx;
+  border: 1rpx solid rgba(214, 230, 229, 0.96);
+  box-shadow: 0 7rpx 18rpx rgba(21, 35, 43, 0.12);
+}
+
+.panel {
+  border-radius: 16rpx 16rpx 0 0;
+  padding: 20rpx 32rpx 36rpx;
+  box-shadow: 0 -10rpx 28rpx rgba(21, 35, 43, 0.10);
+}
+
+.panel-title {
+  color: #15232B;
+}
+
+.chip {
+  border-radius: 12rpx;
+  background: #F0F6F5;
+  color: #52616D;
+}
+
+.chip-active {
+  color: #0E7784;
+  background: #E4F3F2;
+  border-color: #0E7784;
+}

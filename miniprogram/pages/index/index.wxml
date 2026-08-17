@@ -1,0 +1,82 @@
+<view class="page">
+  <!-- 地图 -->
+  <map
+    id="map"
+    class="map"
+    latitude="{{latitude}}"
+    longitude="{{longitude}}"
+    scale="{{scale}}"
+    markers="{{markers}}"
+    polyline="{{polylines}}"
+    bindtap="onMapTap"
+    bindmarkertap="onMarkerTap"
+  />
+
+  <view class="top-navigation">
+    <top-nav title="行屿" large-inset="{{true}}" />
+  </view>
+
+  <!-- 顶部：搜索栏（定位状态菊花内嵌右侧，不占用大块区域） -->
+  <view class="top-bar" style="padding-top: {{navigationHeight + 12}}px;">
+    <view class="search-entry" bindtap="goSearch">
+      <text class="iconfont icon-search search-icon"></text>
+      <text class="search-placeholder">搜索景点 / 地名</text>
+      <view wx:if="{{locating}}" class="loc-spinner"></view>
+    </view>
+  </view>
+
+  <!-- 右下操作按钮（圆形简约，安全边距） -->
+  <view class="fab-group">
+    <view class="fab" bindtap="onLocateTap">
+      <text class="iconfont icon-locate fab-icon"></text>
+    </view>
+    <view class="fab" bindtap="goPhotoImport">
+      <text class="iconfont icon-photo-add fab-icon"></text>
+    </view>
+  </view>
+
+  <!-- 底部信息面板 -->
+  <view wx:if="{{showPanel}}" class="panel-mask" bindtap="closePanel"></view>
+  <view wx:if="{{showPanel}}" class="panel safe-bottom">
+    <view class="panel-handle"></view>
+
+    <!-- 已标记小岛 -->
+    <block wx:if="{{activeIsland}}">
+      <view class="panel-title">{{activeIsland.name}}</view>
+      <view class="panel-addr">{{activeIsland.address}}</view>
+      <view class="panel-meta">
+        照片 {{photoCount}} 张 · 标记于 {{activeIsland.createdAtText}} · 备注：{{activeIsland.remark || '无'}}
+      </view>
+      <view class="panel-actions">
+        <button class="btn btn-primary act" bindtap="viewIslandDetail">查看详情</button>
+        <button class="btn btn-ghost act" bindtap="routeToIsland">路线规划</button>
+        <button class="btn btn-ghost act" bindtap="editIsland">编辑</button>
+        <button class="btn btn-danger act" bindtap="deleteIsland">删除</button>
+      </view>
+    </block>
+
+    <!-- 普通点位 -->
+    <block wx:else>
+      <view class="panel-title">{{activePoint.name}}</view>
+      <view class="panel-addr">{{activePoint.address}}</view>
+      <view wx:if="{{nearbyPois.length}}" class="nearby">
+        <view class="nearby-title">附近地点（点击切换）</view>
+        <scroll-view scroll-x class="nearby-scroll" enable-flex>
+          <view class="nearby-row">
+            <view
+              wx:for="{{nearbyPois}}"
+              wx:key="index"
+              class="chip {{activePointId === item.id ? 'chip-active' : ''}}"
+              data-index="{{index}}"
+              bindtap="onPoiTap"
+            >{{item.name}}</view>
+          </view>
+        </scroll-view>
+      </view>
+      <view class="panel-actions">
+        <button class="btn btn-primary act" bindtap="markAsIsland">标记为我的小岛</button>
+        <button class="btn btn-ghost act" bindtap="routeFromPoint">设为路线终点</button>
+      </view>
+    </block>
+  </view>
+</view>

@@ -1,0 +1,321 @@
+/* 路线规划 */
+.page {
+  min-height: 100vh;
+  background: #F4F6FB;
+}
+
+.map {
+  width: 100%;
+  height: 46vh;
+  background: #E8ECF4;
+}
+
+/* 信息卡 */
+.info-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  margin: 20rpx 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(31, 39, 51, 0.06);
+}
+
+.route-head {
+  display: flex;
+  align-items: center;
+}
+
+.route-end {
+  flex: 1;
+  min-width: 0;
+}
+
+.route-label {
+  font-size: 22rpx;
+  color: #9AA3B2;
+}
+
+.route-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1F2733;
+  margin-top: 4rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-arrow {
+  margin: 0 20rpx;
+  color: #2B5CD9;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.route-stats {
+  display: flex;
+  margin-top: 24rpx;
+  background: #F7F9FD;
+  border-radius: 16rpx;
+  padding: 20rpx 0;
+}
+
+.stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-tap {
+  cursor: pointer;
+}
+
+.stat-num {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #2B5CD9;
+}
+
+.stat-label {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #9AA3B2;
+}
+
+.mode-row {
+  display: flex;
+  margin-top: 24rpx;
+}
+
+.mode {
+  flex: 1;
+  text-align: center;
+  font-size: 27rpx;
+  color: #6B7686;
+  background: #F2F4F9;
+  border-radius: 999rpx;
+  padding: 16rpx 0;
+  margin: 0 8rpx;
+}
+
+.mode-icon {
+  font-size: 30rpx;
+  margin-right: 6rpx;
+  vertical-align: -2rpx;
+}
+
+.mode-active {
+  color: #FFFFFF;
+  background: #2B5CD9;
+  font-weight: 600;
+}
+
+.navigation-btn {
+  margin-top: 24rpx;
+}
+
+.navigation-icon {
+  margin-right: 10rpx;
+  font-size: 30rpx;
+  vertical-align: -2rpx;
+}
+
+/* 终点设置 */
+.end-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  margin: 0 24rpx 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(31, 39, 51, 0.06);
+}
+
+.end-line {
+  display: flex;
+  align-items: center;
+}
+
+.end-label {
+  font-size: 26rpx;
+  color: #9AA3B2;
+  width: 80rpx;
+  flex-shrink: 0;
+}
+
+.end-value {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1F2733;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.end-empty {
+  color: #B6BECB;
+  font-weight: 400;
+}
+
+.end-edit {
+  font-size: 24rpx;
+  color: #2B5CD9;
+  margin-left: 16rpx;
+}
+
+.end-search {
+  margin-top: 20rpx;
+}
+
+.end-input-row {
+  display: flex;
+  align-items: center;
+}
+
+.end-input {
+  flex: 1;
+  background: #F2F4F9;
+  border-radius: 999rpx;
+  height: 72rpx;
+  padding: 0 28rpx;
+  font-size: 27rpx;
+}
+
+.input-ph {
+  color: #B6BECB;
+}
+
+.end-search-btn {
+  margin-left: 16rpx;
+  color: #2B5CD9;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.end-results,
+.end-islands {
+  margin-top: 16rpx;
+  max-height: 400rpx;
+  overflow-y: auto;
+}
+
+.end-result {
+  display: flex;
+  flex-direction: column;
+  padding: 18rpx 8rpx;
+  border-bottom: 1rpx solid #F0F2F7;
+}
+
+.end-result-name {
+  font-size: 27rpx;
+  color: #1F2733;
+}
+
+.end-result-name-icon {
+  font-size: 26rpx;
+  color: #2B5CD9;
+  margin-right: 6rpx;
+}
+
+.end-result-addr {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #9AA3B2;
+}
+
+.end-islands-title {
+  font-size: 24rpx;
+  color: #9AA3B2;
+  margin-top: 8rpx;
+}
+
+/* 指引 */
+.steps-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  margin: 0 24rpx 60rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(31, 39, 51, 0.06);
+}
+
+.step {
+  display: flex;
+  margin-top: 20rpx;
+}
+
+.step-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: #2B5CD9;
+  margin: 12rpx 20rpx 0 4rpx;
+  flex-shrink: 0;
+}
+
+.step-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #4A5568;
+  line-height: 1.6;
+}
+
+/* Route planning surface */
+.page {
+  background: #F4F8F8;
+  padding-bottom: 48rpx;
+}
+
+.map {
+  height: 42vh;
+}
+
+.info-card,
+.end-card,
+.steps-card {
+  border-radius: 16rpx;
+  border: 1rpx solid #E1ECEB;
+  box-shadow: none;
+  padding: 30rpx;
+}
+
+.route-name,
+.end-value,
+.end-result-name {
+  color: #15232B;
+}
+
+.route-arrow,
+.stat-num,
+.end-edit,
+.end-search-btn,
+.end-result-name-icon {
+  color: #0E7784;
+}
+
+.route-stats {
+  border-radius: 12rpx;
+  background: #EEF6F5;
+}
+
+.mode {
+  border-radius: 10rpx;
+  background: #EDF3F3;
+  color: #52616D;
+}
+
+.mode-active {
+  background: #0E7784;
+  color: #FFFFFF;
+}
+
+.navigation-btn {
+  box-shadow: 0 6rpx 14rpx rgba(14, 119, 132, 0.18);
+}
+
+.end-input {
+  border-radius: 12rpx;
+  background: #F0F6F5;
+}
+
+.step-dot {
+  background: #D07A45;
+}

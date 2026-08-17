@@ -1,0 +1,235 @@
+/* 小岛列表 */
+.page {
+  min-height: 100vh;
+  padding-bottom: calc(152rpx + env(safe-area-inset-bottom));
+}
+
+.sort-bar {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  background: #FFFFFF;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sort-item {
+  font-size: 28rpx;
+  color: #6B7686;
+  margin-right: 28rpx;
+  padding-bottom: 8rpx;
+  border-bottom: 4rpx solid transparent;
+}
+
+.sort-item.active {
+  color: #2B5CD9;
+  font-weight: 600;
+  border-bottom-color: #2B5CD9;
+}
+
+.sort-tip {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  color: #2FA96B;
+  background: #E7F6EE;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+}
+
+.sort-tip-icon {
+  font-size: 24rpx;
+  vertical-align: -2rpx;
+}
+
+.sort-tip-dim {
+  color: #6B7686;
+  background: #F2F4F9;
+}
+
+.list {
+  padding: 8rpx 24rpx 40rpx;
+}
+
+.island-item {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(31, 39, 51, 0.05);
+}
+
+.island-badge {
+  font-size: 44rpx;
+  color: #2B5CD9;
+  margin-right: 20rpx;
+}
+
+.island-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.island-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2733;
+}
+
+.island-addr {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: #6B7686;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.island-meta {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #9AA3B2;
+}
+
+.dot {
+  margin: 0 8rpx;
+}
+
+.island-remark {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #F5A623;
+}
+
+.island-ops {
+  display: flex;
+  flex-direction: column;
+  margin-left: 12rpx;
+}
+
+.op {
+  font-size: 24rpx;
+  color: #2B5CD9;
+  background: #EAF0FF;
+  border-radius: 10rpx;
+  padding: 10rpx 22rpx;
+  margin-top: 10rpx;
+  text-align: center;
+}
+
+.op-del {
+  color: #E8564C;
+  background: #FDECEB;
+}
+
+.empty-sub {
+  color: #9AA3B2;
+  font-size: 24rpx;
+  text-align: center;
+  margin-top: 12rpx;
+  padding: 0 60rpx;
+}
+
+.empty-btn {
+  margin-top: 40rpx;
+  width: 320rpx;
+}
+
+/* Island index */
+.sort-bar {
+  padding: 24rpx;
+  background: #F4F8F8;
+  border-bottom: 1rpx solid #E4EEEE;
+}
+
+.sort-item {
+  color: #718087;
+}
+
+.sort-item.active {
+  color: #0E7784;
+  border-bottom-color: #0E7784;
+}
+
+.sort-tip {
+  color: #2E8B70;
+  background: #E8F4EE;
+  border-radius: 10rpx;
+}
+
+.list {
+  padding: 16rpx 24rpx 48rpx;
+}
+
+.island-item {
+  border-radius: 16rpx;
+  border: 1rpx solid #E1ECEB;
+  box-shadow: none;
+  padding: 28rpx;
+  margin-bottom: 14rpx;
+}
+
+.island-badge {
+  color: #0E7784;
+}
+
+.island-name {
+  color: #15232B;
+}
+
+.island-remark {
+  color: #B06B2D;
+}
+
+.op {
+  color: #0E7784;
+  background: #E4F3F2;
+  border-radius: 8rpx;
+}
+
+.op-del {
+  color: #C95A50;
+  background: #FBEAE7;
+}
+
+.collection-header {
+  margin: 24rpx 24rpx 0;
+  padding: 28rpx 30rpx;
+  background: #15232B;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-left: 8rpx solid #0E7784;
+}
+
+.collection-eyebrow {
+  color: #9CB4B4;
+  font-size: 21rpx;
+}
+
+.collection-title {
+  margin-top: 6rpx;
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.collection-count {
+  display: flex;
+  align-items: baseline;
+  color: #E9B27A;
+}
+
+.collection-count-num {
+  font-size: 54rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.collection-count-unit {
+  margin-left: 6rpx;
+  font-size: 22rpx;
+}

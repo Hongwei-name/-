@@ -1,0 +1,116 @@
+<view class="page">
+  <top-nav title="路线规划" show-back="{{true}}" bindback="onBack" />
+  <!-- 地图 -->
+  <map
+    id="routeMap"
+    class="map"
+    latitude="{{center.lat}}"
+    longitude="{{center.lng}}"
+    scale="{{13}}"
+    markers="{{markers}}"
+    polyline="{{polylines}}"
+  />
+
+  <!-- 路线信息卡 -->
+  <view wx:if="{{route}}" class="info-card">
+    <view class="route-head">
+      <view class="route-end">
+        <view class="route-label">起点</view>
+        <view class="route-name">{{start.name || '我的位置'}}</view>
+      </view>
+      <view class="route-arrow">→</view>
+      <view class="route-end">
+        <view class="route-label">终点</view>
+        <view class="route-name">{{end.name}}</view>
+      </view>
+    </view>
+    <view class="route-stats">
+      <view class="stat">
+        <text class="stat-num">{{route.distanceText}}</text>
+        <text class="stat-label">距离</text>
+      </view>
+      <view class="stat">
+        <text class="stat-num">{{route.durationText}}</text>
+        <text class="stat-label">预计耗时</text>
+      </view>
+      <view wx:if="{{schemeCount > 1}}" class="stat stat-tap" bindtap="onSchemeTap">
+        <text class="stat-num">{{schemeIndex + 1}}/{{schemeCount}}</text>
+        <text class="stat-label">点击切换方案</text>
+      </view>
+    </view>
+    <view class="mode-row">
+      <view
+        wx:for="{{modes}}"
+        wx:key="mode"
+        class="mode {{mode === item.mode ? 'mode-active' : ''}}"
+        data-mode="{{item.mode}}"
+        bindtap="onModeChange"
+      >
+        <text class="iconfont {{item.icon}} mode-icon"></text>{{item.label}}
+      </view>
+    </view>
+    <button class="btn btn-primary navigation-btn" bindtap="onStartNavigation">
+      <text class="iconfont icon-route navigation-icon"></text>开始导航
+    </button>
+  </view>
+
+  <!-- 终点设置 -->
+  <view class="end-card">
+    <view class="end-line" bindtap="onToggleSearch">
+      <text class="end-label">终点</text>
+      <text class="end-value {{end ? '' : 'end-empty'}}">{{end ? end.name : '请选择终点'}}</text>
+      <text class="end-edit">{{searchOpen ? '收起' : '更换'}}</text>
+    </view>
+
+    <view wx:if="{{searchOpen}}" class="end-search">
+      <view class="end-input-row">
+        <input
+          class="end-input"
+          placeholder="搜索景点、地名作为终点"
+          placeholder-class="input-ph"
+          value="{{keyword}}"
+          confirm-type="search"
+          bindinput="onKeywordInput"
+          bindconfirm="onSearchEnd"
+        />
+        <view class="end-search-btn" bindtap="onSearchEnd">搜索</view>
+      </view>
+      <view wx:if="{{endResults.length}}" class="end-results">
+        <view
+          wx:for="{{endResults}}"
+          wx:key="id"
+          class="end-result"
+          data-index="{{index}}"
+          bindtap="onEndResultTap"
+        >
+          <text class="end-result-name">{{item.name}}</text>
+          <text class="end-result-addr">{{item.address}}</text>
+        </view>
+      </view>
+      <view wx:if="{{islands.length}}" class="end-islands">
+        <view class="end-islands-title">或选择我的小岛</view>
+        <view
+          wx:for="{{islands}}"
+          wx:key="id"
+          class="end-result"
+          data-id="{{item.id}}"
+          bindtap="onIslandTap"
+        >
+          <text class="end-result-name">
+            <text class="iconfont icon-island end-result-name-icon"></text>{{item.name}}
+          </text>
+          <text class="end-result-addr">{{item.address}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 路线指引 -->
+  <view wx:if="{{route && steps.length}}" class="steps-card">
+    <view class="section-title">路线指引</view>
+    <view wx:for="{{steps}}" wx:key="index" class="step">
+      <view class="step-dot"></view>
+      <view class="step-text">{{item.instruction}}</view>
+    </view>
+  </view>
+</view>

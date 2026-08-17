@@ -1,0 +1,18 @@
+# 微信开发者工具个人配置（本地个性化，不入库）
+project.private.config.json
+
+# 私有密钥配置（高德 ApiKey 等，不入库）
+miniprogram/config/private.js
+
+# Node
+node_modules/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 云函数本地 node_modules（部署时由云端安装）
+cloudfunctions/**/node_modules/
+
+# 日志
+*.log

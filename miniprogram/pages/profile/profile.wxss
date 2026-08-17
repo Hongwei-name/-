@@ -1,0 +1,206 @@
+.page {
+  min-height: 100vh;
+  padding-bottom: calc(152rpx + env(safe-area-inset-bottom));
+  background: #F4F8F8;
+}
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  margin: 28rpx 24rpx 0;
+  padding: 32rpx 28rpx;
+  background: #15232B;
+  border-radius: 16rpx;
+  border-left: 8rpx solid #0E7784;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #E4F3F2;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-placeholder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-head {
+  position: absolute;
+  top: 20rpx;
+  left: 36rpx;
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  background: #0E7784;
+}
+
+.avatar-body {
+  position: absolute;
+  left: 19rpx;
+  bottom: 15rpx;
+  width: 62rpx;
+  height: 34rpx;
+  border-radius: 34rpx 34rpx 0 0;
+  background: #0E7784;
+}
+
+.profile-copy {
+  flex: 1;
+  min-width: 0;
+  margin-left: 20rpx;
+}
+
+.profile-name {
+  color: #FFFFFF;
+  font-size: 34rpx;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-status {
+  margin-top: 8rpx;
+  color: #AEC4C4;
+  font-size: 22rpx;
+  line-height: 1.45;
+}
+
+.profile-action {
+  margin: 0 0 0 16rpx;
+  padding: 14rpx 18rpx;
+  border: 1rpx solid #4E8E94;
+  border-radius: 8rpx;
+  background: transparent;
+  color: #E8F4F3;
+  font-size: 22rpx;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.profile-action::after {
+  border: none;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  margin: 16rpx 24rpx 0;
+  padding: 28rpx 0;
+  border: 1rpx solid #E1ECEB;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+}
+
+.stat-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  color: #15232B;
+  font-size: 46rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-label {
+  margin-top: 10rpx;
+  color: #718087;
+  font-size: 22rpx;
+}
+
+.stat-divider {
+  width: 1rpx;
+  height: 58rpx;
+  background: #E1ECEB;
+}
+
+.menu-section {
+  margin: 24rpx;
+  border: 1rpx solid #E1ECEB;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  min-height: 126rpx;
+  padding: 0 24rpx;
+  border-bottom: 1rpx solid #EAF0EF;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62rpx;
+  height: 62rpx;
+  border-radius: 12rpx;
+  font-size: 34rpx;
+}
+
+.island-icon {
+  color: #0E7784;
+  background: #E4F3F2;
+}
+
+.photo-icon {
+  color: #B06B2D;
+  background: #F9EFE3;
+}
+
+.tour-icon {
+  color: #4D739A;
+  background: #E8EFF6;
+}
+
+.sync-icon {
+  color: #2E8B70;
+  background: #E8F4EE;
+}
+
+.menu-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  margin-left: 20rpx;
+}
+
+.menu-title {
+  color: #15232B;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.menu-sub {
+  margin-top: 5rpx;
+  color: #8A98A5;
+  font-size: 22rpx;
+}
+
+.menu-arrow {
+  margin-left: 12rpx;
+  color: #8A98A5;
+  font-size: 42rpx;
+  line-height: 1;
+}

@@ -1,0 +1,207 @@
+/* 照片归集 */
+.page {
+  min-height: 100vh;
+  padding-bottom: 60rpx;
+}
+
+.intro-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1F2733;
+}
+
+.intro-icon {
+  font-size: 34rpx;
+  color: #2B5CD9;
+  margin-right: 10rpx;
+}
+
+.intro-text {
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  color: #6B7686;
+  line-height: 1.6;
+}
+
+.choose-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+
+.choose-btn {
+  width: 420rpx;
+}
+
+.choose-tip {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #9AA3B2;
+}
+
+/* 解析中 */
+.analyzing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 140rpx 0;
+}
+
+.analyzing-spinner {
+  width: 56rpx;
+  height: 56rpx;
+  border: 6rpx solid #E4E8F0;
+  border-top-color: #2B5CD9;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.analyzing-text {
+  margin-top: 24rpx;
+  color: #6B7686;
+  font-size: 26rpx;
+}
+
+/* 结果 */
+.results {
+  padding: 8rpx 24rpx 60rpx;
+}
+
+.result-summary {
+  font-size: 24rpx;
+  color: #9AA3B2;
+  padding: 12rpx 8rpx;
+}
+
+.result-item {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(31, 39, 51, 0.05);
+}
+
+.thumb {
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 12rpx;
+  background: #EEF1F6;
+  flex-shrink: 0;
+}
+
+.result-main {
+  flex: 1;
+  margin-left: 20rpx;
+  min-width: 0;
+}
+
+.status {
+  font-size: 26rpx;
+}
+
+.status-icon {
+  font-size: 26rpx;
+  margin-right: 6rpx;
+  vertical-align: -2rpx;
+}
+
+.status-ok {
+  color: #2FA96B;
+}
+
+.status-warn {
+  color: #F5A623;
+}
+
+.shot {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #9AA3B2;
+}
+
+.photo-location {
+  display: flex;
+  align-items: center;
+  margin-top: 6rpx;
+  color: #718087;
+  font-size: 22rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.photo-location-icon {
+  margin-right: 6rpx;
+  color: #0E7784;
+  font-size: 22rpx;
+  flex-shrink: 0;
+}
+
+.pick {
+  margin-top: 12rpx;
+  display: inline-block;
+  font-size: 24rpx;
+  color: #9AA3B2;
+  background: #F2F4F9;
+  border-radius: 10rpx;
+  padding: 10rpx 20rpx;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pick-active {
+  color: #2B5CD9;
+  background: #EAF0FF;
+}
+
+.save-btn {
+  margin-top: 24rpx;
+}
+
+/* Photo workflow */
+.page {
+  background: #F4F8F8;
+  padding-bottom: 72rpx;
+}
+
+.intro-title {
+  color: #15232B;
+}
+
+.intro-icon,
+.pick-active {
+  color: #0E7784;
+}
+
+.choose-wrap {
+  padding: 132rpx 40rpx;
+}
+
+.result-item {
+  border: 1rpx solid #E1ECEB;
+  box-shadow: none;
+  border-radius: 16rpx;
+  padding: 22rpx;
+}
+
+.thumb {
+  border-radius: 8rpx;
+}
+
+.pick-active {
+  background: #E4F3F2;
+}
+
+.intro {
+  border-left: 8rpx solid #0E7784;
+}
