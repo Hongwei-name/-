@@ -235,6 +235,14 @@ function replaceProfile(profile) {
   return value
 }
 
+function clearProfile() {
+  try {
+    wx.removeStorageSync(KEYS.PROFILE)
+  } catch (e) {
+    write(KEYS.PROFILE, null)
+  }
+}
+
 /* ---------------- 同步辅助 ---------------- */
 
 /** 取待同步删除记录（取后清空） */
@@ -278,6 +286,7 @@ module.exports = {
   getProfile,
   saveProfile,
   replaceProfile,
+  clearProfile,
   takeDeleted,
   putBackDeleted,
   replaceAll

@@ -9,6 +9,7 @@ Page({
     photoCount: 0,
     cloudReady: false,
     authorizing: false,
+    profileFormReady: false,
     draftNickName: '',
     draftAvatarUrl: ''
   },
@@ -21,23 +22,28 @@ Page({
 
   refresh() {
     const app = getApp()
+    const requestId = (this.profileRequestId || 0) + 1
+    this.profileRequestId = requestId
     this.setData({
       profile: storage.getProfile(),
+      profileFormReady: Boolean(storage.getProfile()),
       islandCount: storage.getIslands().length,
       photoCount: storage.getPhotos().length,
       cloudReady: Boolean(app.globalData.openid)
     })
     app.ensureLogin().then((openid) => {
+      if (requestId !== this.profileRequestId) return null
       this.setData({ cloudReady: Boolean(openid) })
       if (!openid) return null
       return cloud.pullProfile()
     }).then((remoteProfile) => {
-      if (!remoteProfile) return
+      if (requestId !== this.profileRequestId || !remoteProfile) return
       const localProfile = storage.getProfile()
       if (!localProfile || (remoteProfile.updatedAt || 0) > (localProfile.updatedAt || 0)) {
         const profile = storage.replaceProfile(remoteProfile)
         this.setData({
           profile,
+          profileFormReady: true,
           draftNickName: profile.nickName,
           draftAvatarUrl: profile.avatarUrl
         })
@@ -61,6 +67,27 @@ Page({
     this.setData({ draftNickName: e.detail.value })
   },
 
+  /** 用户主动确认后建立当前微信账号的云端身份会话。 */
+  onWechatLogin() {
+    if (this.data.authorizing) return
+    this.setData({ authorizing: true })
+    getApp()
+      .resumeLogin()
+      .then((openid) => {
+        this.setData({ authorizing: false, cloudReady: Boolean(openid) })
+        if (!openid) {
+          util.toast('微信登录失败，请稍后重试')
+          return
+        }
+        this.setData({ profileFormReady: true })
+        util.toast('登录成功，请完善头像和昵称', 'success')
+      })
+      .catch(() => {
+        this.setData({ authorizing: false })
+        util.toast('微信登录失败，请稍后重试')
+      })
+  },
+
   onSaveProfile() {
     if (this.data.authorizing) return
     const nickName = (this.data.draftNickName || '').trim()
@@ -74,7 +101,7 @@ Page({
       avatarUrl: this.data.draftAvatarUrl || ''
     })
     getApp()
-      .ensureLogin()
+      .resumeLogin()
       .then((openid) => (openid ? cloud.syncProfile(profile) : { ok: false }))
       .then((result) => {
         this.setData({ authorizing: false, profile })
@@ -113,5 +140,21 @@ Page({
         util.toast('同步失败，请检查网络')
       }
     })
+  },
+
+  async onLogout() {
+    const ok = await util.confirm('退出登录', '将清除本机头像、昵称和云端会话。本机小岛、照片及云端数据不会被删除。')
+    if (!ok) return
+    this.profileRequestId = (this.profileRequestId || 0) + 1
+    getApp().logout()
+    storage.clearProfile()
+    this.setData({
+      profile: null,
+      cloudReady: false,
+      profileFormReady: false,
+      draftNickName: '',
+      draftAvatarUrl: ''
+    })
+    util.toast('已退出登录')
   }
 })

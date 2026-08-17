@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.cloudbase.net/cli/cloudbaserc.schema.json",
+  "envId": "cloud1-d9gdn6fg4ebd718a4",
+  "functionRoot": "cloudfunctions",
+  "functions": [
+    {
+      "name": "login",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main"
+    },
+    {
+      "name": "syncIslands",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main"
+    },
+    {
+      "name": "syncPhotos",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main"
+    },
+    {
+      "name": "syncProfile",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main"
+    },
+    {
+      "name": "initDB",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main"
+    }
+  ]
+}

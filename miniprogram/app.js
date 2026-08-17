@@ -6,17 +6,24 @@
  *  3. 预取用户当前位置 + 逆地理名称（供首页 / 列表排序 / 路线规划使用）
  */
 const config = require('./config/index')
+const LOGGED_OUT_KEY = 'xy:logged-out'
 
 App({
   globalData: {
     openid: '',          // 云登录后的 openid，为空表示未登录 / 云不可用
     cloudReady: false,   // 云开发是否初始化成功
+    loggedOut: false,    // 用户主动退出后，不再自动恢复云端会话
+    loginRequestId: 0,
     location: null,      // { lng, lat, name } 用户当前位置
     pendingPoint: null,  // 搜索页选中的点位，供地图页 onShow 消费 { lng, lat, name, address }
     pendingRouteEnd: null // 待选路线终点（search 页发起路线时使用）
   },
 
   onLaunch() {
+    try {
+      this.globalData.loggedOut = Boolean(wx.getStorageSync(LOGGED_OUT_KEY))
+    } catch (e) {}
+
     // 1. 初始化云开发（未开通 / 无 AppID 时静默失败）
     if (wx.cloud) {
       try {
@@ -41,13 +48,16 @@ App({
    * 确保已登录，返回 openid（未登录 / 云不可用返回 null）
    */
   ensureLogin() {
-    if (!this.globalData.cloudReady) return Promise.resolve(null)
+    if (!this.globalData.cloudReady || this.globalData.loggedOut) return Promise.resolve(null)
     if (this.globalData.openid) return Promise.resolve(this.globalData.openid)
     if (this.globalData.loginPromise) return this.globalData.loginPromise
 
+    const requestId = this.globalData.loginRequestId + 1
+    this.globalData.loginRequestId = requestId
     this.globalData.loginPromise = wx.cloud
       .callFunction({ name: config.CLOUD_FN.LOGIN })
       .then((res) => {
+        if (requestId !== this.globalData.loginRequestId || this.globalData.loggedOut) return null
         this.globalData.openid = (res.result && res.result.openid) || ''
         this.globalData.loginPromise = null
         // 登录成功后静默全量同步一次（云端备份）
@@ -58,12 +68,33 @@ App({
         return this.globalData.openid
       })
       .catch((err) => {
+        if (requestId !== this.globalData.loginRequestId || this.globalData.loggedOut) return null
         console.warn('[行屿] 登录失败，数据仅保存在本地', err)
         this.globalData.openid = ''
         this.globalData.loginPromise = null
         return null
       })
     return this.globalData.loginPromise
+  },
+
+  /** 停止本机云端会话；云端数据与本地旅行记录均保留。 */
+  logout() {
+    this.globalData.loginRequestId += 1
+    this.globalData.loginPromise = null
+    this.globalData.openid = ''
+    this.globalData.loggedOut = true
+    try {
+      wx.setStorageSync(LOGGED_OUT_KEY, true)
+    } catch (e) {}
+  },
+
+  /** 用户再次保存资料时恢复当前微信账号的云端会话。 */
+  resumeLogin() {
+    this.globalData.loggedOut = false
+    try {
+      wx.removeStorageSync(LOGGED_OUT_KEY)
+    } catch (e) {}
+    return this.ensureLogin()
   },
 
   /**

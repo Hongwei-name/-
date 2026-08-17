@@ -2,19 +2,24 @@
   <top-nav title="我的" />
 
   <view class="profile-hero">
-    <button class="avatar" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择微信头像">
-      <image wx:if="{{draftAvatarUrl}}" class="avatar-image" src="{{draftAvatarUrl}}" mode="aspectFill" />
-      <view wx:else class="avatar-placeholder">
-        <view class="avatar-head"></view>
-        <view class="avatar-body"></view>
+    <view class="profile-identity">
+      <button class="avatar" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择微信头像">
+        <image wx:if="{{draftAvatarUrl}}" class="avatar-image" src="{{draftAvatarUrl}}" mode="aspectFill" />
+        <view wx:else class="avatar-placeholder">
+          <view class="avatar-head"></view>
+          <view class="avatar-body"></view>
+        </view>
+      </button>
+      <view class="profile-copy">
+        <input class="profile-name" type="nickname" value="{{draftNickName}}" placeholder="填写昵称" placeholder-class="profile-name-placeholder" bindinput="onNickNameInput" maxlength="20" />
+        <view class="profile-status">{{profile ? (cloudReady ? '资料已同步至云端' : '资料已保存到本机') : '选择头像并填写昵称后保存'}}</view>
       </view>
-    </button>
-    <view class="profile-copy">
-      <input class="profile-name" type="nickname" value="{{draftNickName}}" placeholder="填写昵称" placeholder-class="profile-name-placeholder" bindinput="onNickNameInput" maxlength="20" />
-      <view class="profile-status">{{profile ? (cloudReady ? '资料已同步至云端' : '资料已保存到本机') : '选择头像并填写昵称后保存'}}</view>
     </view>
-    <button class="profile-action" bindtap="onSaveProfile" loading="{{authorizing}}">
-      {{profile ? '保存资料' : '完成资料'}}
+    <button wx:if="{{!profileFormReady}}" class="profile-action" bindtap="onWechatLogin" loading="{{authorizing}}">
+      微信授权登录
+    </button>
+    <button wx:else class="profile-action" bindtap="onSaveProfile" loading="{{authorizing}}">
+      保存资料
     </button>
   </view>
 
@@ -60,6 +65,14 @@
       <view class="menu-copy">
         <text class="menu-title">云端同步</text>
         <text class="menu-sub">{{cloudReady ? '同步本地旅行数据' : '尚未连接云端'}}</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view wx:if="{{profile || cloudReady}}" class="menu-item logout-item" bindtap="onLogout">
+      <view class="menu-icon logout-icon"><text class="iconfont icon-back logout-arrow"></text></view>
+      <view class="menu-copy">
+        <text class="menu-title">退出登录</text>
+        <text class="menu-sub">退出当前微信授权</text>
       </view>
       <text class="menu-arrow">›</text>
     </view>
