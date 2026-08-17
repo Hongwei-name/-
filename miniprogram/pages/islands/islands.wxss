@@ -78,6 +78,19 @@
   color: #1F2733;
 }
 
+.visited-label {
+  display: inline-block;
+  margin-left: 10rpx;
+  padding: 3rpx 10rpx;
+  border-radius: 8rpx;
+  background: #E8F4EE;
+  color: #2E8B70;
+  font-size: 19rpx;
+  font-weight: 500;
+  line-height: 1.4;
+  vertical-align: 3rpx;
+}
+
 .island-addr {
   margin-top: 6rpx;
   font-size: 24rpx;

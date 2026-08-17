@@ -309,6 +309,12 @@ Page({
   markAsIsland() {
     const p = this.data.activePoint
     if (!p) return
+    if (!storage.isLoggedIn()) {
+      util.toast('请先登录后再标记小岛')
+      this.closePanel()
+      wx.switchTab({ url: '/pages/profile/profile' })
+      return
+    }
     const q = [
       'lng=' + p.lng,
       'lat=' + p.lat,
@@ -361,10 +367,15 @@ Page({
   /* ---------- 跳转 ---------- */
 
   goSearch() {
-    wx.switchTab({ url: '/pages/search/search' })
+    wx.navigateTo({ url: '/pages/search/search' })
   },
 
   goPhotoImport() {
+    if (!storage.isLoggedIn()) {
+      util.toast('请先登录后再归集照片')
+      wx.switchTab({ url: '/pages/profile/profile' })
+      return
+    }
     wx.navigateTo({ url: '/pages/photo-import/photo-import' })
   },
 

@@ -114,7 +114,7 @@ https://restapi.amap.com
 
 1. 开发者工具顶部「云开发」按钮 → 开通，创建环境。
 2. 将环境 ID 填入 `miniprogram/config/index.js` 的 `CLOUD_ENV`（留空则使用默认环境）。
-3. 右键 `cloudfunctions` 下每个云函数目录 → **上传并部署（云端安装依赖）**，共 4 个：`login`、`syncIslands`、`syncPhotos`、`initDB`。
+3. 右键 `cloudfunctions` 下每个云函数目录 → **上传并部署（云端安装依赖）**，共 5 个：`login`、`syncIslands`、`syncPhotos`、`syncProfile`、`initDB`。
 4. 创建数据库集合：在云开发控制台创建 `islands`、`photos` 两个集合；或运行一次 `initDB` 云函数自动创建。
 5. 集合权限建议：**「仅创建者可读写」**（云函数以管理员权限读写，不受影响；客户端不直接读写集合）。
 

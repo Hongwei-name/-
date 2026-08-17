@@ -44,6 +44,12 @@
   white-space: nowrap;
 }
 
+.visited-hint {
+  margin-top: 12rpx;
+  color: #2E8B70;
+  font-size: 22rpx;
+}
+
 .summary-dot {
   margin: 0 8rpx;
   color: #A7BAB8;

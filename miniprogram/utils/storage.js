@@ -5,10 +5,12 @@
  *  - island（小岛/标记景点）：{ id, name, address, lng, lat, remark, createdAt, updatedAt }
  *  - photo（照片关联）：{ id, islandId, localPath, exifLng, exifLat, shotTime, locationName, createdAt, updatedAt }
  *  - history（搜索历史）：[{ keyword, time }]
+ *  - notes（随心记）：[{ id, content, createdAt, updatedAt }]
  *  - profile（本地用户资料）：{ nickName, avatarUrl, updatedAt }
  *  - deleted（待同步删除）：{ islands: [{id, updatedAt}], photos: [...] }
  *
  * 约束：不存储原图到服务端，仅保存图片本地路径 + EXIF 经纬度 + 关联小岛 ID。
+ * 所有数据按当前 OpenID 分区；未登录时不读取也不写入旅行数据。
  */
 const util = require('./util')
 
@@ -16,13 +18,16 @@ const KEYS = {
   ISLANDS: 'xy:islands',
   PHOTOS: 'xy:photos',
   HISTORY: 'xy:history',
+  NOTES: 'xy:notes',
   DELETED: 'xy:deleted',
   PROFILE: 'xy:profile'
 }
 
+const LEGACY_MIGRATION_KEY = 'xy:account-data-migrated'
+
 const listeners = []
 
-function read(key, fallback) {
+function readRaw(key, fallback) {
   try {
     const val = wx.getStorageSync(key)
     return val === '' || val === null || val === undefined ? fallback : val
@@ -31,12 +36,55 @@ function read(key, fallback) {
   }
 }
 
-function write(key, val) {
+function writeRaw(key, val) {
   try {
     wx.setStorageSync(key, val)
   } catch (e) {
     console.warn('[storage] 写入失败', key, e)
   }
+}
+
+function removeRaw(key) {
+  try {
+    wx.removeStorageSync(key)
+  } catch (e) {}
+}
+
+function getOpenid() {
+  try {
+    const app = typeof getApp === 'function' && getApp()
+    return (app && app.globalData && app.globalData.openid) || ''
+  } catch (e) {
+    return ''
+  }
+}
+
+function scopedKey(key) {
+  const openid = getOpenid()
+  return openid ? key + ':' + openid : ''
+}
+
+function isLoggedIn() {
+  return Boolean(scopedKey(KEYS.ISLANDS))
+}
+
+function read(key, fallback) {
+  const keyForAccount = scopedKey(key)
+  return keyForAccount ? readRaw(keyForAccount, fallback) : fallback
+}
+
+function write(key, val) {
+  const keyForAccount = scopedKey(key)
+  if (!keyForAccount) return false
+  writeRaw(keyForAccount, val)
+  return true
+}
+
+function remove(key) {
+  const keyForAccount = scopedKey(key)
+  if (!keyForAccount) return false
+  removeRaw(keyForAccount)
+  return true
 }
 
 function emit() {
@@ -79,6 +127,8 @@ function saveIsland(data) {
       lng: null,
       lat: null,
       remark: '',
+      visited: false,
+      visitedAt: null,
       createdAt: now,
       updatedAt: now
     },
@@ -203,6 +253,40 @@ function clearHistory() {
   write(KEYS.HISTORY, [])
 }
 
+/* ---------------- 随心记 ---------------- */
+
+function getNotes() {
+  return read(KEYS.NOTES, []).slice().sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+}
+
+function saveNote(content) {
+  const text = String(content || '').trim()
+  if (!text) return null
+  const now = Date.now()
+  const note = {
+    id: util.genId('note'),
+    content: text.slice(0, 500),
+    createdAt: now,
+    updatedAt: now
+  }
+  const notes = getNotes()
+  notes.unshift(note)
+  write(KEYS.NOTES, notes)
+  emit()
+  return note
+}
+
+function deleteNote(id) {
+  const notes = getNotes().filter((note) => note.id !== id)
+  write(KEYS.NOTES, notes)
+  emit()
+}
+
+function replaceNotes(notes) {
+  write(KEYS.NOTES, Array.isArray(notes) ? notes : [])
+  emit()
+}
+
 /* ---------------- 用户资料 ---------------- */
 
 function getProfile() {
@@ -236,11 +320,41 @@ function replaceProfile(profile) {
 }
 
 function clearProfile() {
-  try {
-    wx.removeStorageSync(KEYS.PROFILE)
-  } catch (e) {
-    write(KEYS.PROFILE, null)
+  remove(KEYS.PROFILE)
+}
+
+/**
+ * 将旧版本未分区的本地数据迁移到首次登录的账号下，并删除旧副本。
+ * 迁移只会执行一次，避免其他账号读取到原先设备级的数据。
+ */
+function migrateLegacyData() {
+  if (!isLoggedIn() || readRaw(LEGACY_MIGRATION_KEY, false)) return false
+
+  Object.keys(KEYS).forEach((name) => {
+    const key = KEYS[name]
+    const legacy = readRaw(key, undefined)
+    const keyForAccount = scopedKey(key)
+    if (legacy !== undefined && readRaw(keyForAccount, undefined) === undefined) {
+      writeRaw(keyForAccount, legacy)
+    }
+    removeRaw(key)
+  })
+  writeRaw(LEGACY_MIGRATION_KEY, true)
+  emit()
+  return true
+}
+
+/** 退出账号时删除该账号在本机的全部缓存，云端备份不受影响。 */
+function clearAccountData() {
+  if (!isLoggedIn()) return
+  const profile = getProfile()
+  Object.keys(KEYS).forEach((name) => remove(KEYS[name]))
+  if (profile && profile.avatarUrl && /^wxfile:\/\//.test(profile.avatarUrl)) {
+    try {
+      wx.removeSavedFile({ filePath: profile.avatarUrl })
+    } catch (e) {}
   }
+  emit()
 }
 
 /* ---------------- 同步辅助 ---------------- */
@@ -270,6 +384,9 @@ function replaceAll(islands, photos) {
 
 module.exports = {
   onChange,
+  isLoggedIn,
+  migrateLegacyData,
+  clearAccountData,
   getIslands,
   getIsland,
   saveIsland,
@@ -283,6 +400,10 @@ module.exports = {
   getHistory,
   addHistory,
   clearHistory,
+  getNotes,
+  saveNote,
+  deleteNote,
+  replaceNotes,
   getProfile,
   saveProfile,
   replaceProfile,

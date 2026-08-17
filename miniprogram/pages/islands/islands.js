@@ -41,6 +41,7 @@ Page({
       const photos = storage.getPhotosByIsland(isl.id)
       return Object.assign({}, isl, {
         photoCount: photos.length,
+        visitedText: isl.visited ? '已去过' : '',
         createdAtText: util.formatTime(isl.createdAt)
       })
     })

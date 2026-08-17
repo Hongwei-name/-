@@ -13,6 +13,39 @@ exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext()
   const col = db.collection(COLLECTION)
 
+  if (event.op === 'pullNotes') {
+    const res = await col.where({ _openid: OPENID }).limit(1).get()
+    return { notes: res.data.length ? (res.data[0].notes || []) : [] }
+  }
+
+  if (event.op === 'pushNotes') {
+    const notes = (Array.isArray(event.notes) ? event.notes : [])
+      .slice(0, 100)
+      .map((note) => ({
+        id: String((note && note.id) || ''),
+        content: String((note && note.content) || '').slice(0, 500),
+        createdAt: Number((note && note.createdAt) || Date.now()),
+        updatedAt: Number((note && note.updatedAt) || Date.now())
+      }))
+      .filter((note) => note.id && note.content)
+    const exist = await col.where({ _openid: OPENID }).limit(1).get()
+    if (exist.data.length) {
+      await col.doc(exist.data[0]._id).update({ data: { notes, notesUpdatedAt: Date.now() } })
+    } else {
+      await col.add({
+        data: {
+          _openid: OPENID,
+          nickName: '',
+          avatarUrl: '',
+          updatedAt: 0,
+          notes,
+          notesUpdatedAt: Date.now()
+        }
+      })
+    }
+    return { ok: true }
+  }
+
   if (event.op === 'pull') {
     const res = await col.where({ _openid: OPENID }).limit(1).get()
     if (!res.data.length) return { profile: null }

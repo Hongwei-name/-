@@ -2,11 +2,28 @@
  * 行屿 - 全局入口
  * 职责：
  *  1. 初始化微信云开发（失败不阻塞，核心功能本地可用）
- *  2. 静默登录（云函数 login 换取 openid）
+ *  2. 用户主动登录时通过云函数获取 OpenID
  *  3. 预取用户当前位置 + 逆地理名称（供首页 / 列表排序 / 路线规划使用）
  */
 const config = require('./config/index')
+const storage = require('./utils/storage')
 const LOGGED_OUT_KEY = 'xy:logged-out'
+
+function withTimeout(promise, timeout, message) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), timeout)
+    promise.then(
+      (result) => {
+        clearTimeout(timer)
+        resolve(result)
+      },
+      (err) => {
+        clearTimeout(timer)
+        reject(err)
+      }
+    )
+  })
+}
 
 App({
   globalData: {
@@ -16,6 +33,7 @@ App({
     loginRequestId: 0,
     location: null,      // { lng, lat, name } 用户当前位置
     pendingPoint: null,  // 搜索页选中的点位，供地图页 onShow 消费 { lng, lat, name, address }
+    pendingPlace: null,  // 搜索页选中的 POI，供景点详情页消费
     pendingRouteEnd: null // 待选路线终点（search 页发起路线时使用）
   },
 
@@ -37,10 +55,7 @@ App({
       }
     }
 
-    // 2. 静默登录（不阻塞启动）
-    this.ensureLogin()
-
-    // 3. 预取定位（不阻塞启动）
+    // 2. 预取定位（不阻塞启动）
     this.ensureLocation()
   },
 
@@ -54,14 +69,18 @@ App({
 
     const requestId = this.globalData.loginRequestId + 1
     this.globalData.loginRequestId = requestId
-    this.globalData.loginPromise = wx.cloud
-      .callFunction({ name: config.CLOUD_FN.LOGIN })
+    this.globalData.loginPromise = withTimeout(
+      wx.cloud.callFunction({ name: config.CLOUD_FN.LOGIN }),
+      12000,
+      '云端登录超时'
+    )
       .then((res) => {
         if (requestId !== this.globalData.loginRequestId || this.globalData.loggedOut) return null
         this.globalData.openid = (res.result && res.result.openid) || ''
         this.globalData.loginPromise = null
-        // 登录成功后静默全量同步一次（云端备份）
+        // 首次登录迁移旧缓存；之后数据按 OpenID 分区保存。
         if (this.globalData.openid) {
+          storage.migrateLegacyData()
           const cloud = require('./utils/cloud')
           cloud.syncAll().catch(() => {})
         }
@@ -77,7 +96,7 @@ App({
     return this.globalData.loginPromise
   },
 
-  /** 停止本机云端会话；云端数据与本地旅行记录均保留。 */
+  /** 停止本机云端会话；调用方会在此之前清除本机账号缓存。 */
   logout() {
     this.globalData.loginRequestId += 1
     this.globalData.loginPromise = null
@@ -88,13 +107,18 @@ App({
     } catch (e) {}
   },
 
-  /** 用户再次保存资料时恢复当前微信账号的云端会话。 */
+  /** 用户主动登录后恢复当前微信账号的云端会话。 */
   resumeLogin() {
     this.globalData.loggedOut = false
     try {
       wx.removeStorageSync(LOGGED_OUT_KEY)
     } catch (e) {}
     return this.ensureLogin()
+  },
+
+  /** 由用户操作恢复当前微信会话对应的云开发 OpenID 会话。 */
+  loginWithWechat() {
+    return this.resumeLogin()
   },
 
   /**
@@ -117,7 +141,8 @@ App({
           amap
             .regeo(loc.lng, loc.lat)
             .then((data) => {
-              loc.name = (data && data.regeocode && data.regeocode.formatted_address) || ''
+              loc.name = (data && data.formatted_address) || ''
+              loc.city = (data && data.city) || ''
               this.globalData.location = loc
               this.globalData.locationPromise = null
               resolve(loc)

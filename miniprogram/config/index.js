@@ -30,7 +30,7 @@ module.exports = {
   MATCH_RADIUS_M: 1000,
 
   // 搜索默认城市（留空为全国范围搜索，可填如 '杭州' 提升本地结果精度）
-  SEARCH_CITY: '',
+  SEARCH_CITY: '深圳',
 
   // 云函数名称
   CLOUD_FN: {

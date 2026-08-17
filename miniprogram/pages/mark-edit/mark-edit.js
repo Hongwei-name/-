@@ -20,6 +20,11 @@ Page({
   },
 
   onLoad(options) {
+    if (!storage.isLoggedIn()) {
+      util.toast('请先登录后再标记小岛')
+      setTimeout(() => wx.switchTab({ url: '/pages/profile/profile' }), 500)
+      return
+    }
     if (options.id) {
       // 编辑模式
       const island = storage.getIsland(options.id)
@@ -70,6 +75,10 @@ Page({
   },
 
   onSave() {
+    if (!storage.isLoggedIn()) {
+      util.toast('登录已失效，请重新登录')
+      return
+    }
     const form = this.data.form
     if (!form.name.trim()) {
       util.toast('请填写小岛名称')

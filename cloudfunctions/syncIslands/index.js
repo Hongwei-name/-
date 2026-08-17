@@ -40,6 +40,8 @@ exports.main = async (event) => {
         lng: isl.lng,
         lat: isl.lat,
         remark: isl.remark || '',
+        visited: Boolean(isl.visited),
+        visitedAt: isl.visitedAt || null,
         createdAt: isl.createdAt || Date.now(),
         updatedAt: isl.updatedAt || Date.now()
       }

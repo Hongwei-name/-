@@ -1,0 +1,40 @@
+<view class="page">
+  <top-nav title="随心记" />
+
+  <view wx:if="{{loggedIn}}" class="composer">
+    <textarea
+      class="note-input"
+      value="{{content}}"
+      maxlength="500"
+      placeholder="记录此刻的风、路和心情..."
+      placeholder-class="note-placeholder"
+      auto-height="{{true}}"
+      bindinput="onInput"
+    />
+    <view class="composer-footer">
+      <text class="word-count">{{content.length}} / 500</text>
+      <button class="save-note" bindtap="onSave" loading="{{saving}}">记录</button>
+    </view>
+  </view>
+
+  <view wx:if="{{loggedIn && notes.length}}" class="note-list">
+    <view wx:for="{{notes}}" wx:key="id" class="note-item">
+      <text class="note-content">{{item.content}}</text>
+      <view class="note-footer">
+        <text class="note-time">{{item.timeText}}</text>
+        <text class="note-delete" data-id="{{item.id}}" bindtap="onDelete">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{loggedIn}}" class="empty-state">
+    <text class="empty-title">还没有随心记</text>
+    <text class="empty-sub">留下一句话，记住这一刻</text>
+  </view>
+
+  <view wx:else class="empty-state login-state">
+    <text class="empty-title">登录后开始记录</text>
+    <text class="empty-sub">你的记录仅归属于当前微信账号</text>
+    <button class="login-button" bindtap="goLogin">去登录</button>
+  </view>
+</view>

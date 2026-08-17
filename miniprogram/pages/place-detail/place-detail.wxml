@@ -1,0 +1,44 @@
+<view class="page">
+  <top-nav title="景点详情" show-back="{{true}}" bindback="onBack" />
+
+  <view wx:if="{{place}}" class="place-content">
+    <view wx:if="{{place.mainPhotoUrl}}" class="photo-gallery">
+      <image class="cover" src="{{place.mainPhotoUrl}}" mode="aspectFill" data-url="{{place.mainPhotoUrl}}" bindtap="onPreviewPhoto" />
+      <text wx:if="{{place.photoUrls.length > 1}}" class="photo-count">{{place.photoUrls.length}} 张图片</text>
+      <scroll-view wx:if="{{place.photoUrls.length > 1}}" scroll-x class="photo-strip" enable-flex>
+        <view class="photo-strip-row">
+          <image
+            wx:for="{{place.photoUrls}}"
+            wx:key="*this"
+            class="photo-thumb {{item === place.mainPhotoUrl ? 'photo-thumb-active' : ''}}"
+            src="{{item}}"
+            mode="aspectFill"
+            data-url="{{item}}"
+            bindtap="onPreviewPhoto"
+          />
+        </view>
+      </scroll-view>
+    </view>
+    <view class="place-header">
+      <text class="place-name">{{place.name}}</text>
+      <view class="place-meta">
+        <text wx:if="{{place.ratingText}}" class="rating">{{place.ratingText}}</text>
+        <text wx:if="{{place.distanceText}}" class="distance">{{place.distanceText}}</text>
+      </view>
+    </view>
+
+    <view class="detail-row">
+      <text class="detail-label">地址</text>
+      <text class="detail-value">{{place.address || '暂无地址'}}</text>
+    </view>
+    <view wx:if="{{place.type}}" class="detail-row">
+      <text class="detail-label">分类</text>
+      <text class="detail-value">{{place.type}}</text>
+    </view>
+
+    <view class="actions">
+      <button class="mark-action" bindtap="onMark">标记小岛</button>
+      <button class="route-action" bindtap="onRoute">路线规划</button>
+    </view>
+  </view>
+</view>

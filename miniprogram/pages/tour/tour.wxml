@@ -15,7 +15,7 @@
     <view class="route-summary">
       <view>
         <view class="summary-kicker">从当前位置依次到访</view>
-        <view class="summary-value">{{hasRoute ? stops.length + ' 座小岛' : '等待计算'}}</view>
+        <view class="summary-value">{{hasRoute ? stops.length + ' 座小岛' : (skippedVisitedCount ? '待规划小岛已全部到访' : '等待计算')}}</view>
       </view>
       <view wx:if="{{hasRoute}}" class="summary-stats">
         <text>{{totalDistanceText}}</text>
@@ -23,6 +23,7 @@
         <text>{{totalDurationText}}</text>
       </view>
     </view>
+    <view wx:if="{{skippedVisitedCount}}" class="visited-hint">已排除 {{skippedVisitedCount}} 座已去过小岛</view>
 
     <view class="mode-row">
       <view

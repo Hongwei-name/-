@@ -1,0 +1,115 @@
+.page {
+  min-height: 100vh;
+  padding-bottom: calc(152rpx + env(safe-area-inset-bottom));
+  background: #F4F8F8;
+}
+
+.composer {
+  margin: 24rpx;
+  padding: 28rpx;
+  border: 1rpx solid #DDE9E7;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+}
+
+.note-input {
+  width: 100%;
+  min-height: 180rpx;
+  color: #15232B;
+  font-size: 29rpx;
+  line-height: 1.7;
+}
+
+.note-placeholder {
+  color: #9AA7AD;
+}
+
+.composer-footer,
+.note-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.composer-footer {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #E8EFEE;
+}
+
+.word-count,
+.note-time {
+  color: #8A98A5;
+  font-size: 22rpx;
+}
+
+.save-note,
+.login-button {
+  margin: 0;
+  padding: 15rpx 36rpx;
+  border-radius: 8rpx;
+  background: #0E7784;
+  color: #FFFFFF;
+  font-size: 25rpx;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.save-note::after,
+.login-button::after {
+  border: 0;
+}
+
+.note-list {
+  margin: 0 24rpx;
+}
+
+.note-item {
+  margin-bottom: 16rpx;
+  padding: 28rpx;
+  border: 1rpx solid #E1ECEB;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+}
+
+.note-content {
+  display: block;
+  color: #26363D;
+  font-size: 28rpx;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.note-footer {
+  margin-top: 22rpx;
+}
+
+.note-delete {
+  color: #B85454;
+  font-size: 23rpx;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 180rpx 48rpx 80rpx;
+  text-align: center;
+}
+
+.empty-title {
+  color: #15232B;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.empty-sub {
+  margin-top: 12rpx;
+  color: #718087;
+  font-size: 25rpx;
+}
+
+.login-button {
+  margin-top: 32rpx;
+}

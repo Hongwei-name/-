@@ -21,6 +21,11 @@ Page({
   },
 
   onLoad(options) {
+    if (!storage.isLoggedIn()) {
+      util.toast('请先登录后再归集照片')
+      setTimeout(() => wx.switchTab({ url: '/pages/profile/profile' }), 500)
+      return
+    }
     const islands = storage.getIslands()
     const islandNames = ['不归集'].concat(islands.map((i) => i.name))
     this.setData({

@@ -42,7 +42,7 @@
     >
       <text class="iconfont icon-island island-badge"></text>
       <view class="island-main">
-        <view class="island-name">{{item.name}}</view>
+        <view class="island-name">{{item.name}}<text wx:if="{{item.visitedText}}" class="visited-label">{{item.visitedText}}</text></view>
         <view class="island-addr">{{item.address || '暂无地址'}}</view>
         <view class="island-meta">
           <text>照片 {{item.photoCount}} 张</text>

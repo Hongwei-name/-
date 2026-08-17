@@ -4,120 +4,226 @@
   background: #F4F8F8;
 }
 
-.profile-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 28rpx 24rpx 0;
-  padding: 32rpx 28rpx;
-  background: #15232B;
+.account-panel {
+  margin: 24rpx 24rpx 0;
+  padding: 32rpx;
+  border: 1rpx solid #DCE9E7;
   border-radius: 16rpx;
-  border-left: 8rpx solid #0E7784;
+  background: #FFFFFF;
+  box-shadow: 0 4rpx 18rpx rgba(21, 35, 43, 0.05);
 }
 
-.profile-identity {
+.account-summary,
+.login-state,
+.editor-fields {
   display: flex;
   align-items: center;
-  width: 100%;
   min-width: 0;
 }
 
 .avatar {
-  width: 100rpx;
-  height: 100rpx;
-  min-width: 100rpx;
-  max-width: 100rpx;
+  display: flex !important;
+  flex: 0 0 104rpx;
+  width: 104rpx;
+  height: 104rpx;
+  min-width: 104rpx;
+  max-width: 104rpx;
+  max-height: 104rpx;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
+  background: #E4F3F2;
+  box-sizing: border-box;
+  line-height: 0;
+}
+
+.avatar::after,
+.wechat-login::after,
+.cancel-action::after,
+.save-action::after {
+  border: 0;
+}
+
+.avatar-static {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 50%;
-  background: #E4F3F2;
-  border: none;
-  box-sizing: border-box;
 }
 
-.avatar::after {
-  border: none;
-}
-
-.avatar-image {
+.avatar-image,
+.avatar-placeholder {
+  display: block;
   width: 100%;
   height: 100%;
+  border-radius: 50%;
 }
 
 .avatar-placeholder {
   position: relative;
-  width: 100%;
-  height: 100%;
 }
 
 .avatar-head {
   position: absolute;
-  top: 20rpx;
-  left: 36rpx;
-  width: 28rpx;
-  height: 28rpx;
+  top: 21rpx;
+  left: 37rpx;
+  width: 30rpx;
+  height: 30rpx;
   border-radius: 50%;
   background: #0E7784;
 }
 
 .avatar-body {
   position: absolute;
-  left: 19rpx;
-  bottom: 15rpx;
-  width: 62rpx;
-  height: 34rpx;
-  border-radius: 34rpx 34rpx 0 0;
+  left: 20rpx;
+  bottom: 16rpx;
+  width: 64rpx;
+  height: 35rpx;
+  border-radius: 35rpx 35rpx 0 0;
   background: #0E7784;
 }
 
-.profile-copy {
+.account-copy {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-width: 0;
-  margin-left: 20rpx;
+  margin-left: 22rpx;
 }
 
-.profile-name {
-  display: block;
-  width: 100%;
-  height: 46rpx;
-  padding: 0;
-  color: #FFFFFF;
+.account-name {
+  overflow: hidden;
+  color: #15232B;
   font-size: 34rpx;
   font-weight: 700;
-  line-height: 46rpx;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.profile-name-placeholder {
-  color: #A8C0C0;
-}
-
-.profile-status {
+.account-status {
   margin-top: 8rpx;
-  color: #AEC4C4;
+  color: #718087;
   font-size: 22rpx;
   line-height: 1.45;
 }
 
-.profile-action {
-  width: 100%;
-  margin: 24rpx 0 0;
-  padding: 14rpx 18rpx;
-  border: 1rpx solid #4E8E94;
+.edit-link {
+  margin-left: 16rpx;
+  color: #0E7784;
+  font-size: 25rpx;
+}
+
+.login-avatar {
+  background: #EFF7F6;
+}
+
+.wechat-login {
+  min-width: 156rpx;
+  margin: 0 0 0 16rpx;
+  padding: 17rpx 18rpx;
   border-radius: 8rpx;
-  background: transparent;
-  color: #E8F4F3;
-  font-size: 22rpx;
+  background: #0E7784;
+  color: #FFFFFF;
+  font-size: 25rpx;
+  font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
 }
 
-.profile-action::after {
-  border: none;
+.profile-editor {
+  width: 100%;
+}
+
+.profile-avatar-button {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 104rpx !important;
+  width: 104rpx !important;
+  height: 104rpx !important;
+  min-width: 104rpx !important;
+  max-width: 104rpx !important;
+  min-height: 104rpx !important;
+  max-height: 104rpx !important;
+}
+
+.editor-heading {
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-title {
+  color: #15232B;
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.editor-subtitle {
+  margin-top: 6rpx;
+  color: #718087;
+  font-size: 22rpx;
+}
+
+.editor-fields {
+  margin-top: 28rpx;
+}
+
+.nickname-field {
+  flex: 1;
+  min-width: 0;
+  margin-left: 22rpx;
+}
+
+.field-label {
+  display: block;
+  color: #718087;
+  font-size: 21rpx;
+}
+
+.profile-name {
+  width: 100%;
+  height: 52rpx;
+  padding: 0;
+  border-bottom: 1rpx solid #CFDFDD;
+  color: #15232B;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 52rpx;
+}
+
+.profile-name-placeholder {
+  color: #9AA7AD;
+  font-weight: 400;
+}
+
+.editor-actions {
+  display: flex;
+  margin-top: 30rpx;
+}
+
+.cancel-action,
+.save-action {
+  margin: 0;
+  padding: 19rpx 18rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.cancel-action {
+  width: 150rpx;
+  margin-right: 16rpx;
+  background: #EDF4F3;
+  color: #42656A;
+}
+
+.save-action {
+  flex: 1;
+  background: #0E7784;
+  color: #FFFFFF;
 }
 
 .stats-row {
@@ -156,11 +262,18 @@
   background: #E1ECEB;
 }
 
+.section-heading {
+  margin: 30rpx 28rpx 10rpx;
+  color: #52616D;
+  font-size: 23rpx;
+  font-weight: 600;
+}
+
 .menu-section {
-  margin: 24rpx;
+  margin: 0 24rpx;
+  overflow: hidden;
   border: 1rpx solid #E1ECEB;
   border-radius: 16rpx;
-  overflow: hidden;
   background: #FFFFFF;
 }
 
@@ -173,7 +286,7 @@
 }
 
 .menu-item:last-child {
-  border-bottom: none;
+  border-bottom: 0;
 }
 
 .menu-icon {
@@ -182,34 +295,15 @@
   justify-content: center;
   width: 62rpx;
   height: 62rpx;
-  border-radius: 12rpx;
+  border-radius: 8rpx;
   font-size: 34rpx;
 }
 
-.island-icon {
-  color: #0E7784;
-  background: #E4F3F2;
-}
-
-.photo-icon {
-  color: #B06B2D;
-  background: #F9EFE3;
-}
-
-.tour-icon {
-  color: #4D739A;
-  background: #E8EFF6;
-}
-
-.sync-icon {
-  color: #2E8B70;
-  background: #E8F4EE;
-}
-
-.logout-icon {
-  color: #B85454;
-  background: #F8EAEA;
-}
+.island-icon { color: #0E7784; background: #E4F3F2; }
+.photo-icon { color: #B06B2D; background: #F9EFE3; }
+.tour-icon { color: #4D739A; background: #E8EFF6; }
+.sync-icon { color: #2E8B70; background: #E8F4EE; }
+.logout-icon { color: #B85454; background: #F8EAEA; }
 
 .logout-arrow {
   display: block;
@@ -241,4 +335,8 @@
   color: #8A98A5;
   font-size: 42rpx;
   line-height: 1;
+}
+
+.account-section .section-heading {
+  margin-top: 30rpx;
 }

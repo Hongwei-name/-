@@ -8,7 +8,7 @@ Component({
     visible: true,
     list: [
       { path: '/pages/index/index', text: '地图', icon: 'icon-map' },
-      { path: '/pages/search/search', text: '搜索', icon: 'icon-search' },
+      { path: '/pages/note/note', text: '随心记', icon: 'icon-info' },
       { path: '/pages/profile/profile', text: '我的', type: 'profile' }
     ]
   },

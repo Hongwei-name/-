@@ -14,6 +14,20 @@ const AMAP_KEY = config.AMAP_KEY
 const BASE = 'https://restapi.amap.com/v3'
 const V4_BASE = 'https://restapi.amap.com/v4'
 
+function getPoiPhotoUrls(poi) {
+  const photos = poi && poi.photos
+  if (!Array.isArray(photos)) return []
+  return photos
+    .map((photo) => (typeof photo === 'string' ? photo : photo && (photo.url || photo.photo_url)))
+    .filter(Boolean)
+    .filter((url, index, list) => list.indexOf(url) === index)
+    .slice(0, 5)
+}
+
+function getPoiPhotoUrl(poi) {
+  return getPoiPhotoUrls(poi)[0] || ''
+}
+
 /** 高德错误码 -> 可操作的中文提示 */
 const AMAP_ERROR_HINTS = {
   INVALID_USER_KEY: '高德 Key 无效：请检查 config/index.js 中的 AMAP_KEY 是否正确填写',
@@ -100,7 +114,9 @@ function searchPlaces(keywords, opts) {
       lat: parseFloat((p.location || '').split(',')[1]),
       city: p.cityname || '',
       district: p.adname || '',
-      type: p.type || ''
+      type: p.type || '',
+      photoUrl: getPoiPhotoUrl(p),
+      photoUrls: getPoiPhotoUrls(p)
     }))
   })
 }
@@ -261,7 +277,7 @@ function normalizeTransit(route) {
  * @param {number} lng
  * @param {number} lat
  * @param {object} opts { types, keywords, radius, offset, page, sortrule }
- * @returns Promise<Array<{id,name,address,lng,lat,city,district,type,rating,cost}>>
+ * @returns Promise<Array<{id,name,address,lng,lat,city,district,type,rating,cost,photoUrl,photoUrls}>>
  */
 function searchAround(lng, lat, opts) {
   const o = opts || {}
@@ -290,7 +306,9 @@ function searchAround(lng, lat, opts) {
         district: p.adname || '',
         type: p.type || '',
         rating: isNaN(rating) ? null : rating,
-        cost: isNaN(cost) ? null : cost
+        cost: isNaN(cost) ? null : cost,
+        photoUrl: getPoiPhotoUrl(p),
+        photoUrls: getPoiPhotoUrls(p)
       }
     })
   })

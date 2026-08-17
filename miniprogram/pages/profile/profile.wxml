@@ -1,26 +1,59 @@
 <view class="page">
   <top-nav title="我的" />
 
-  <view class="profile-hero">
-    <view class="profile-identity">
-      <button class="avatar" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择微信头像">
-        <image wx:if="{{draftAvatarUrl}}" class="avatar-image" src="{{draftAvatarUrl}}" mode="aspectFill" />
+  <view class="account-panel">
+    <view wx:if="{{profile && !showProfileEditor}}" class="account-summary">
+      <view class="avatar avatar-static">
+        <image wx:if="{{profile.avatarUrl && !avatarError}}" class="avatar-image" src="{{profile.avatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
         <view wx:else class="avatar-placeholder">
           <view class="avatar-head"></view>
           <view class="avatar-body"></view>
         </view>
-      </button>
-      <view class="profile-copy">
-        <input class="profile-name" type="nickname" value="{{draftNickName}}" placeholder="填写昵称" placeholder-class="profile-name-placeholder" bindinput="onNickNameInput" maxlength="20" />
-        <view class="profile-status">{{profile ? (cloudReady ? '资料已同步至云端' : '资料已保存到本机') : '选择头像并填写昵称后保存'}}</view>
+      </view>
+      <view class="account-copy">
+        <text class="account-name">{{profile.nickName}}</text>
+        <text class="account-status">{{cloudReady ? '微信已登录，资料已同步' : '资料已保存到本机'}}</text>
+      </view>
+      <view class="edit-link" bindtap="onEditProfile">编辑</view>
+    </view>
+
+    <view wx:elif="{{!profileFormReady}}" class="login-state">
+      <view class="avatar avatar-static login-avatar">
+        <view class="avatar-placeholder">
+          <view class="avatar-head"></view>
+          <view class="avatar-body"></view>
+        </view>
+      </view>
+      <view class="account-copy">
+        <text class="account-name">登录微信</text>
+        <text class="account-status">同步你的旅行足迹与收藏</text>
+      </view>
+      <button class="wechat-login" bindtap="onWechatLogin" loading="{{authorizing}}">微信登录</button>
+    </view>
+
+    <view wx:else class="profile-editor">
+      <view class="editor-heading">
+        <text class="editor-title">完善旅行资料</text>
+        <text class="editor-subtitle">头像和昵称仅用于你的行屿资料</text>
+      </view>
+      <view class="editor-fields">
+        <button class="avatar profile-avatar-button" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择微信头像">
+          <image wx:if="{{draftAvatarUrl && !avatarError}}" class="avatar-image" src="{{draftAvatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
+          <view wx:else class="avatar-placeholder">
+            <view class="avatar-head"></view>
+            <view class="avatar-body"></view>
+          </view>
+        </button>
+        <view class="nickname-field">
+          <text class="field-label">昵称</text>
+          <input class="profile-name" type="nickname" value="{{draftNickName}}" placeholder="输入你的微信昵称" placeholder-class="profile-name-placeholder" bindinput="onNickNameInput" maxlength="20" />
+        </view>
+      </view>
+      <view class="editor-actions">
+        <button wx:if="{{profile}}" class="cancel-action" bindtap="onCancelProfileEdit">取消</button>
+        <button class="save-action" bindtap="onSaveProfile" loading="{{authorizing}}">完成并同步</button>
       </view>
     </view>
-    <button wx:if="{{!profileFormReady}}" class="profile-action" bindtap="onWechatLogin" loading="{{authorizing}}">
-      微信授权登录
-    </button>
-    <button wx:else class="profile-action" bindtap="onSaveProfile" loading="{{authorizing}}">
-      保存资料
-    </button>
   </view>
 
   <view class="stats-row">
@@ -35,6 +68,7 @@
     </view>
   </view>
 
+  <view class="section-heading">旅行管理</view>
   <view class="menu-section">
     <view class="menu-item" bindtap="goIslands">
       <view class="menu-icon island-icon"><text class="iconfont icon-island"></text></view>
@@ -68,13 +102,19 @@
       </view>
       <text class="menu-arrow">›</text>
     </view>
-    <view wx:if="{{profile || cloudReady}}" class="menu-item logout-item" bindtap="onLogout">
-      <view class="menu-icon logout-icon"><text class="iconfont icon-back logout-arrow"></text></view>
-      <view class="menu-copy">
-        <text class="menu-title">退出登录</text>
-        <text class="menu-sub">退出当前微信授权</text>
+  </view>
+
+  <view wx:if="{{profile || cloudReady}}" class="account-section">
+    <view class="section-heading">账号</view>
+    <view class="menu-section account-menu">
+      <view class="menu-item logout-item" bindtap="onLogout">
+        <view class="menu-icon logout-icon"><text class="iconfont icon-back logout-arrow"></text></view>
+        <view class="menu-copy">
+          <text class="menu-title">退出登录</text>
+          <text class="menu-sub">清除本机资料与旅行缓存</text>
+        </view>
+        <text class="menu-arrow">›</text>
       </view>
-      <text class="menu-arrow">›</text>
     </view>
   </view>
 </view>

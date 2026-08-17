@@ -2,6 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/search/search",
+    "pages/place-detail/place-detail",
+    "pages/note/note",
     "pages/profile/profile",
     "pages/islands/islands",
     "pages/island-detail/island-detail",
@@ -29,8 +31,8 @@
         "text": "地图"
       },
       {
-        "pagePath": "pages/search/search",
-        "text": "发现"
+        "pagePath": "pages/note/note",
+        "text": "随心记"
       },
       {
         "pagePath": "pages/profile/profile",

@@ -6,6 +6,7 @@
       <view class="title-row">
         <text class="iconfont icon-island title-icon"></text>
         <text class="title">{{island.name}}</text>
+        <text wx:if="{{island.visited}}" class="visited-tag">已去过</text>
         <text wx:if="{{photos.length}}" class="tag">照片 {{photos.length}}</text>
       </view>
       <view class="info-row">
@@ -23,6 +24,7 @@
       <view class="action-row">
         <button class="btn btn-ghost act" bindtap="onEdit">编辑</button>
         <button class="btn btn-ghost act" bindtap="onRoute">路线规划</button>
+        <button class="btn btn-ghost act" bindtap="onToggleVisited">{{island.visited ? '标记为未去过' : '标记为已去过'}}</button>
         <button class="btn btn-danger act" bindtap="onDelete">删除小岛</button>
       </view>
     </view>

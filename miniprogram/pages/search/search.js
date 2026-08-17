@@ -1,5 +1,5 @@
 /**
- * 发现页（第二个 tab）
+ * 地图搜索页
  *  - 默认态：自动加载「附近景点推荐」（高德周边搜索，风景名胜分类，按距离排序）
  *  - 搜索态：保留关键词搜索（历史 / 结果定位 / 标记小岛 / 路线规划）
  *  - 列表项操作：点击回到地图定位；标记为小岛；设为路线终点
@@ -9,8 +9,10 @@ const storage = require('../../utils/storage')
 const util = require('../../utils/util')
 const { distance } = require('../../utils/distance')
 
-const NEARBY_RADIUS_M = 5000 // 附近搜索半径（米）
+const NEARBY_RADIUS_M = 6000 // 附近搜索半径（米）
 const NEARBY_TYPES = '110000' // 高德 POI 分类：风景名胜
+const SEARCH_RADIUS_M = 50000 // 关键词搜索优先覆盖当前位置 50 公里内
+const SEARCH_DEBOUNCE_MS = 350
 
 Page({
   data: {
@@ -27,9 +29,6 @@ Page({
   },
 
   onShow() {
-    if (this.getTabBar) {
-      this.getTabBar().setData({ selected: 1, visible: true })
-    }
     this.setData({ history: storage.getHistory() })
     // 非搜索态时确保附近景点已加载
     if (!this.data.searched) {
@@ -74,13 +73,18 @@ Page({
             sortrule: 'distance'
           })
           .then((list) => {
-            const nearby = list.map((p) => {
+            const nearby = list.filter((p) => p.rating === null || p.rating >= 3).map((p) => {
               const d = distance(p.lng, p.lat, loc.lng, loc.lat)
               const ratingText = p.rating ? '评分 ' + p.rating.toFixed(1) : ''
               return Object.assign({}, p, {
                 distanceText: util.formatDistance(d),
                 ratingText
               })
+            })
+            nearby.sort((a, b) => {
+              const aDistance = distance(a.lng, a.lat, loc.lng, loc.lat)
+              const bDistance = distance(b.lng, b.lat, loc.lng, loc.lat)
+              return aDistance - bDistance
             })
             this.setData({ nearby, nearbyLoading: false, nearbyLoaded: true })
           })
@@ -115,11 +119,26 @@ Page({
   /* ---------- 搜索 ---------- */
 
   onInput(e) {
-    this.setData({ keyword: e.detail.value })
+    const keyword = e.detail.value || ''
+    const trimmed = keyword.trim()
+    if (!trimmed) {
+      this.onClearKeyword()
+      return
+    }
+    this.searchRequestId = (this.searchRequestId || 0) + 1
+    if (this.searchTimer) clearTimeout(this.searchTimer)
+    this.setData({ keyword, results: [], searched: true, searching: true })
+    this.searchTimer = setTimeout(() => {
+      if ((this.data.keyword || '').trim() === trimmed) {
+        this.executeSearch(trimmed, false)
+      }
+    }, SEARCH_DEBOUNCE_MS)
   },
 
   onClearKeyword() {
     this.searchRequestId = (this.searchRequestId || 0) + 1
+    if (this.searchTimer) clearTimeout(this.searchTimer)
+    this.searchTimer = null
     this.setData({ keyword: '', results: [], searched: false, searching: false })
     this.loadNearby()
   },
@@ -134,17 +153,44 @@ Page({
       util.toast('请输入关键词')
       return
     }
-    storage.addHistory(kw)
-    this.setData({ history: storage.getHistory(), searching: true, searched: true })
+    if (this.searchTimer) clearTimeout(this.searchTimer)
+    this.searchTimer = null
+    this.executeSearch(kw, true)
+  },
+
+  executeSearch(kw, addHistory) {
+    if (addHistory) {
+      storage.addHistory(kw)
+      this.setData({ history: storage.getHistory() })
+    }
+    this.setData({ searching: true, searched: true })
     const requestId = (this.searchRequestId || 0) + 1
     this.searchRequestId = requestId
 
     const app = getApp()
-    const myLoc = app.globalData.location
+    const locationPromise = app.globalData.location
+      ? Promise.resolve(app.globalData.location)
+      : app.ensureLocation()
 
-    amap
-      .searchPlaces(kw)
-      .then((list) => {
+    locationPromise
+      .then((myLoc) => {
+        if (myLoc) {
+          return amap.searchAround(myLoc.lng, myLoc.lat, {
+            keywords: kw,
+            radius: SEARCH_RADIUS_M,
+            offset: 50,
+            sortrule: 'distance'
+          }).then((list) => {
+            if (list.length) return { list, myLoc }
+            return amap.searchPlaces(kw, {
+              city: myLoc.city || '',
+              citylimit: Boolean(myLoc.city)
+            }).then((fallback) => ({ list: fallback, myLoc }))
+          })
+        }
+        return amap.searchPlaces(kw).then((list) => ({ list, myLoc: null }))
+      })
+      .then(({ list, myLoc }) => {
         if (requestId !== this.searchRequestId) return
         const results = list.map((p) => {
           let distanceText = ''
@@ -153,6 +199,9 @@ Page({
             distanceText = '距离当前位置约 ' + util.formatDistance(d)
           }
           return Object.assign({}, p, { distanceText })
+        }).sort((a, b) => {
+          if (!myLoc) return 0
+          return distance(a.lng, a.lat, myLoc.lng, myLoc.lat) - distance(b.lng, b.lat, myLoc.lng, myLoc.lat)
         })
         this.setData({ results, searching: false })
       })
@@ -166,6 +215,10 @@ Page({
   onHistoryTap(e) {
     const kw = e.currentTarget.dataset.kw
     this.setData({ keyword: kw }, () => this.onSearch())
+  },
+
+  onUnload() {
+    if (this.searchTimer) clearTimeout(this.searchTimer)
   },
 
   async onClearHistory() {
@@ -185,24 +238,23 @@ Page({
     return list[idx] || null
   },
 
-  /** 点击条目：回到地图定位对应点位 */
+  /** 点击条目：进入景点详情 */
   onItemTap(e) {
     const item = this.getItem(e)
     if (!item) return
-    getApp().globalData.pendingPoint = {
-      lng: item.lng,
-      lat: item.lat,
-      name: item.name,
-      address: item.address,
-      id: item.id
-    }
-    wx.switchTab({ url: '/pages/index/index' })
+    getApp().globalData.pendingPlace = item
+    wx.navigateTo({ url: '/pages/place-detail/place-detail' })
   },
 
   /** 标记为小岛 */
   onMark(e) {
     const item = this.getItem(e)
     if (!item) return
+    if (!storage.isLoggedIn()) {
+      util.toast('请先登录后再标记小岛')
+      wx.switchTab({ url: '/pages/profile/profile' })
+      return
+    }
     const q = [
       'lng=' + item.lng,
       'lat=' + item.lat,

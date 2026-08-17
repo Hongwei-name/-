@@ -42,7 +42,8 @@ Page({
     totalDistanceText: '',
     totalDurationText: '',
     planning: false,
-    hasRoute: false
+    hasRoute: false,
+    skippedVisitedCount: 0
   },
 
   onLoad() {
@@ -95,13 +96,16 @@ Page({
 
   planTour() {
     if (this.data.planning) return
-    const islands = storage.getIslands().filter((island) => isValidCoordinate(island.lng, island.lat))
+    const allIslands = storage.getIslands().filter((island) => isValidCoordinate(island.lng, island.lat))
+    const islands = allIslands.filter((island) => !island.visited)
+    const skippedVisitedCount = allIslands.length - islands.length
     if (!islands.length) {
-      util.toast('请先标记至少一座小岛')
+      this.setData({ hasRoute: false, stops: [], polylines: [], markers: [], skippedVisitedCount })
+      util.toast(skippedVisitedCount ? '未去过的小岛已全部完成' : '请先标记至少一座小岛')
       return
     }
 
-    this.setData({ planning: true, hasRoute: false, stops: [], polylines: [] })
+    this.setData({ planning: true, hasRoute: false, stops: [], polylines: [], skippedVisitedCount })
     wx.showLoading({ title: '计算路线中', mask: true })
     getApp()
       .getLocation()

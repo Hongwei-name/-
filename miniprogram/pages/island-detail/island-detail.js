@@ -52,6 +52,17 @@ Page({
     wx.navigateTo({ url: '/pages/route/route?endId=' + this.data.islandId })
   },
 
+  onToggleVisited() {
+    const island = this.data.island
+    if (!island) return
+    const visited = !island.visited
+    storage.updateIsland(island.id, {
+      visited,
+      visitedAt: visited ? Date.now() : null
+    })
+    util.toast(visited ? '已标记为去过，将不参与路线规划' : '已恢复到路线规划')
+  },
+
   /** 添加照片（含自动归集 / 手动添加） */
   onAddPhotos() {
     wx.navigateTo({ url: '/pages/photo-import/photo-import?islandId=' + this.data.islandId })

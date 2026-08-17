@@ -1,7 +1,7 @@
 /**
  * 云同步封装（微信云开发）
  *
- * 策略：本地数据为操作主源（未登录也可全功能使用），登录后全量同步云端备份。
+ * 策略：旅行数据仅在登录后可访问；登录后按当前 OpenID 全量同步云端备份。
  *  - 上传：将本地小岛 / 照片关联 / 删除记录推送到云函数，按 localId upsert
  *  - 拉取：拉取云端全部记录，与本地按 updatedAt 较新者胜合并
  *  - 照片只传元数据（路径字符串 + EXIF 经纬度 + 关联 ID），不传图片本身
@@ -136,7 +136,24 @@ function pullProfile() {
 
 /** 同步当前是否可用 */
 function isAvailable() {
-  return app().globalData.cloudReady
+  return Boolean(app().globalData.openid)
+}
+
+/** 随心记保存在当前 OpenID 的资料文档中，退出后可在下一次登录恢复。 */
+function syncNotes(notes) {
+  return ensureLogin().then((openid) => {
+    if (!openid) return { ok: false, reason: 'not-logged-in' }
+    return callFn(config.CLOUD_FN.SYNC_PROFILE, { op: 'pushNotes', notes: notes || [] })
+      .then(() => ({ ok: true }))
+      .catch((err) => ({ ok: false, reason: (err && err.message) || 'sync-failed' }))
+  })
+}
+
+function pullNotes() {
+  return ensureLogin().then((openid) => {
+    if (!openid) return []
+    return callFn(config.CLOUD_FN.SYNC_PROFILE, { op: 'pullNotes' }).then((res) => res.notes || [])
+  })
 }
 
 module.exports = {
@@ -147,5 +164,7 @@ module.exports = {
   mergeByUpdatedAt,
   normalizeRemoteList,
   syncProfile,
-  pullProfile
+  pullProfile,
+  syncNotes,
+  pullNotes
 }

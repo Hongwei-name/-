@@ -198,6 +198,15 @@
   padding: 8rpx 24rpx 40rpx;
 }
 
+.nearby-image {
+  width: 148rpx;
+  height: 148rpx;
+  margin-right: 20rpx;
+  border-radius: 8rpx;
+  background: #E8F1F0;
+  flex: 0 0 148rpx;
+}
+
 /* 无定位引导 */
 .loc-guide {
   display: flex;

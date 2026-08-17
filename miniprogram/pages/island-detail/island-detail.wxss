@@ -23,6 +23,16 @@
   word-break: break-all;
 }
 
+.visited-tag {
+  margin-left: 12rpx;
+  padding: 5rpx 12rpx;
+  border-radius: 8rpx;
+  background: #E8F4EE;
+  color: #2E8B70;
+  font-size: 20rpx;
+  white-space: nowrap;
+}
+
 .info-row {
   display: flex;
   margin-top: 18rpx;
