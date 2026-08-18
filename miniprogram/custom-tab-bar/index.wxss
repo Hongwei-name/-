@@ -1,6 +1,4 @@
-@import "/styles/iconfont.wxss";
-
-/* 自定义 tabBar（字体图标，简约现代） */
+/* 自定义 tabBar */
 .tab-bar {
   position: fixed;
   left: 0;
@@ -38,41 +36,9 @@
 
 .tab-icon {
   display: block;
-  font-size: 42rpx;
-  line-height: 48rpx;
-}
-
-.profile-tab-icon {
-  position: relative;
-  width: 42rpx;
-  height: 42rpx;
-  color: currentColor;
-  box-sizing: border-box;
-}
-
-.profile-tab-icon::before {
-  content: '';
-  position: absolute;
-  top: 3rpx;
-  left: 13rpx;
-  width: 14rpx;
-  height: 14rpx;
-  border: 2.5rpx solid currentColor;
-  border-radius: 50%;
-  box-sizing: border-box;
-}
-
-.profile-tab-icon::after {
-  content: '';
-  position: absolute;
-  left: 5rpx;
-  bottom: 2rpx;
-  width: 32rpx;
-  height: 18rpx;
-  border: 2.5rpx solid currentColor;
-  border-bottom: 0;
-  border-radius: 18rpx 18rpx 0 0;
-  box-sizing: border-box;
+  width: 44rpx;
+  height: 44rpx;
+  opacity: 0.68;
 }
 
 .tab-text {
@@ -81,14 +47,13 @@
   line-height: 1.35;
 }
 
-/* 选中态：固定大小的图标底板 + 文字颜色，避免图标跳动。 */
+/* 选中态仅强调文字和图标，不添加图标底板。 */
 .tab-item.active {
   color: #0E7784;
 }
 
-.tab-item.active .tab-icon-wrap {
-  background: #E2F2F1;
-  border: 1rpx solid #CBE4E1;
+.tab-item.active .tab-icon {
+  opacity: 1;
 }
 
 .tab-item.active .tab-text {

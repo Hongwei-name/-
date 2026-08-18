@@ -42,6 +42,7 @@ exports.main = async (event) => {
         remark: isl.remark || '',
         visited: Boolean(isl.visited),
         visitedAt: isl.visitedAt || null,
+        arrivedAt: isl.arrivedAt || null,
         createdAt: isl.createdAt || Date.now(),
         updatedAt: isl.updatedAt || Date.now()
       }

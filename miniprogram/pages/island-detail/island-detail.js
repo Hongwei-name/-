@@ -58,7 +58,8 @@ Page({
     const visited = !island.visited
     storage.updateIsland(island.id, {
       visited,
-      visitedAt: visited ? Date.now() : null
+      visitedAt: visited ? Date.now() : null,
+      arrivedAt: null
     })
     util.toast(visited ? '已标记为去过，将不参与路线规划' : '已恢复到路线规划')
   },

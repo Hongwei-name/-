@@ -8,7 +8,7 @@ const amap = require('../../utils/amap')
 const storage = require('../../utils/storage')
 const util = require('../../utils/util')
 
-const DEFAULT_SCALE = 15
+const DEFAULT_SCALE = 17
 
 Page({
   data: {
@@ -376,7 +376,7 @@ Page({
       wx.switchTab({ url: '/pages/profile/profile' })
       return
     }
-    wx.navigateTo({ url: '/pages/photo-import/photo-import' })
+    wx.navigateTo({ url: '/pages/photo-gallery/photo-gallery' })
   },
 
   /** 引导用户去设置页打开权限 */

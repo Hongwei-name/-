@@ -1,0 +1,37 @@
+<view class="page">
+  <top-nav title="归集照片" show-back="{{true}}" bindback="onBack" />
+
+  <view class="toolbar">
+    <view>
+      <view class="count"><text class="count-number">{{photoCount}}</text><text class="count-unit">张照片</text></view>
+    </view>
+    <button class="add-button" bindtap="onAddPhotos">添加照片</button>
+  </view>
+
+  <view wx:if="{{photos.length}}" class="photo-grid">
+    <view
+      wx:for="{{photos}}"
+      wx:key="id"
+      class="photo-cell"
+      data-index="{{index}}"
+      bindtap="onPreview"
+      bindlongpress="onRemove"
+    >
+      <image wx:if="{{item.localPath && !item.imageUnavailable}}" class="photo-image" src="{{item.localPath}}" mode="aspectFill" data-index="{{index}}" binderror="onImageError" />
+      <view wx:else class="photo-unavailable">
+        <text class="iconfont icon-photo photo-unavailable-icon"></text>
+        <text>图片不可用</text>
+      </view>
+      <view class="photo-overlay">
+        <view class="photo-island" catchtap="onOpenIsland" data-id="{{item.islandId}}">{{item.islandName}}</view>
+        <text class="photo-time">{{item.timeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else class="empty-state">
+    <text class="iconfont icon-photo empty-icon"></text>
+    <view class="empty-title">还没有归集照片</view>
+    <button class="add-empty-button" bindtap="onAddPhotos">从相册添加</button>
+  </view>
+</view>

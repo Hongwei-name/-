@@ -22,10 +22,6 @@
       data-mode="distance"
       bindtap="onSortChange"
     >按距离最近</view>
-    <view class="sort-tip {{cloudReady ? '' : 'sort-tip-dim'}}" bindtap="onSyncTap">
-      <text class="iconfont icon-refresh sort-tip-icon"></text>
-      {{syncing ? '同步中…' : (cloudReady ? '已登录' : '同步')}}
-    </view>
     <view class="sort-tip" bindtap="goPhotoImport">
       <text class="iconfont icon-photo-add sort-tip-icon"></text> 照片归集
     </view>

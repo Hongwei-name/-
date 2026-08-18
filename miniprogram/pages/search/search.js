@@ -73,7 +73,7 @@ Page({
             sortrule: 'distance'
           })
           .then((list) => {
-            const nearby = list.filter((p) => p.rating === null || p.rating >= 3).map((p) => {
+            const nearby = list.filter((p) => (p.rating === null || p.rating >= 3) && p.photoUrl).map((p) => {
               const d = distance(p.lng, p.lat, loc.lng, loc.lat)
               const ratingText = p.rating ? '评分 ' + p.rating.toFixed(1) : ''
               return Object.assign({}, p, {
@@ -114,6 +114,24 @@ Page({
         }
       }
     })
+  },
+
+  onNearbyImageError(e) {
+    const index = Number(e.currentTarget.dataset.index)
+    const item = this.data.nearby[index]
+    if (!Number.isInteger(index) || !item) return
+    const failed = (item.failedPhotoUrls || []).concat(item.photoUrl || '')
+    const next = (item.photoUrls || []).find((url) => failed.indexOf(url) === -1)
+    if (next) {
+      this.setData({
+        ['nearby[' + index + '].photoUrl']: next,
+        ['nearby[' + index + '].failedPhotoUrls']: failed
+      })
+      return
+    }
+    const nearby = this.data.nearby.slice()
+    nearby.splice(index, 1)
+    this.setData({ nearby })
   },
 
   /* ---------- 搜索 ---------- */

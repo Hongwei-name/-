@@ -4,7 +4,7 @@
   <view class="account-panel">
     <view wx:if="{{profile && !showProfileEditor}}" class="account-summary">
       <view class="avatar avatar-static">
-        <image wx:if="{{profile.avatarUrl && !avatarError}}" class="avatar-image" src="{{profile.avatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
+        <image wx:if="{{!avatarError}}" class="avatar-image" src="{{profile.avatarUrl || defaultAvatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
         <view wx:else class="avatar-placeholder">
           <view class="avatar-head"></view>
           <view class="avatar-body"></view>
@@ -12,12 +12,12 @@
       </view>
       <view class="account-copy">
         <text class="account-name">{{profile.nickName}}</text>
-        <text class="account-status">{{cloudReady ? '微信已登录，资料已同步' : '资料已保存到本机'}}</text>
+        <text class="account-status">{{cloudReady ? '微信已登录，数据自动同步' : '资料已保存到本机'}}</text>
       </view>
       <view class="edit-link" bindtap="onEditProfile">编辑</view>
     </view>
 
-    <view wx:elif="{{!profileFormReady}}" class="login-state">
+    <view wx:elif="{{!profileFormReady && !showProfileEditor}}" class="login-state">
       <view class="avatar avatar-static login-avatar">
         <view class="avatar-placeholder">
           <view class="avatar-head"></view>
@@ -38,7 +38,7 @@
       </view>
       <view class="editor-fields">
         <button class="avatar profile-avatar-button" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar" aria-label="选择微信头像">
-          <image wx:if="{{draftAvatarUrl && !avatarError}}" class="avatar-image" src="{{draftAvatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
+          <image wx:if="{{!avatarError}}" class="avatar-image" src="{{draftAvatarUrl || defaultAvatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
           <view wx:else class="avatar-placeholder">
             <view class="avatar-head"></view>
             <view class="avatar-body"></view>
@@ -91,14 +91,6 @@
       <view class="menu-copy">
         <text class="menu-title">全部小岛路线</text>
         <text class="menu-sub">计算依次到访顺序</text>
-      </view>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="onSync">
-      <view class="menu-icon sync-icon"><text class="iconfont icon-refresh"></text></view>
-      <view class="menu-copy">
-        <text class="menu-title">云端同步</text>
-        <text class="menu-sub">{{cloudReady ? '同步本地旅行数据' : '尚未连接云端'}}</text>
       </view>
       <text class="menu-arrow">›</text>
     </view>

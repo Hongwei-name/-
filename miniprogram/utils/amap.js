@@ -14,11 +14,26 @@ const AMAP_KEY = config.AMAP_KEY
 const BASE = 'https://restapi.amap.com/v3'
 const V4_BASE = 'https://restapi.amap.com/v4'
 
+function normalizePhotoUrl(value) {
+  if (!value || typeof value !== 'string') return ''
+  let url = value.trim()
+  if (!url) return ''
+  // 高德部分接口仍返回 http 或协议相对地址，小程序图片组件只接受可访问的 https 地址。
+  if (url.indexOf('//') === 0) url = 'https:' + url
+  if (/^http:\/\//i.test(url)) url = url.replace(/^http:\/\//i, 'https://')
+  return /^https:\/\//i.test(url) ? url : ''
+}
+
 function getPoiPhotoUrls(poi) {
   const photos = poi && poi.photos
   if (!Array.isArray(photos)) return []
   return photos
-    .map((photo) => (typeof photo === 'string' ? photo : photo && (photo.url || photo.photo_url)))
+    .map((photo) => {
+      if (typeof photo === 'string') return photo
+      if (!photo) return ''
+      return photo.url || photo.photo_url || photo.photoUrl || photo.src || photo.image || photo.imgurl || ''
+    })
+    .map(normalizePhotoUrl)
     .filter(Boolean)
     .filter((url, index, list) => list.indexOf(url) === index)
     .slice(0, 5)

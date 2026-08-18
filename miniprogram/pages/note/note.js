@@ -12,6 +12,19 @@ function mergeNotes(local, remote) {
   return Object.keys(map).map((id) => map[id]).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
 }
 
+function notesNeedUpload(notes, remoteNotes) {
+  const remoteById = {}
+  ;(remoteNotes || []).forEach((note) => { remoteById[note.id] = note })
+  if ((notes || []).length !== (remoteNotes || []).length) return true
+  return (notes || []).some((note) => {
+    const remote = remoteById[note.id]
+    return !remote ||
+      note.content !== remote.content ||
+      (note.createdAt || 0) !== (remote.createdAt || 0) ||
+      (note.updatedAt || 0) !== (remote.updatedAt || 0)
+  })
+}
+
 Page({
   data: {
     loggedIn: false,
@@ -23,7 +36,9 @@ Page({
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) tabBar.setData({ selected: 1, visible: true })
-    this.refresh()
+    const app = getApp()
+    const restored = app.restoreLoginSession ? app.restoreLoginSession() : Promise.resolve()
+    restored.then(() => this.refresh())
   },
 
   refresh() {
@@ -34,7 +49,8 @@ Page({
       const notes = mergeNotes(storage.getNotes(), remoteNotes)
       storage.replaceNotes(notes)
       this.setData({ notes: this.formatNotes(notes) })
-      if (notes.length && !remoteNotes.length) cloud.syncNotes(notes)
+      // 云端已有旧笔记时，本地新增或更新的笔记也必须回推，不能只在云端为空时同步。
+      if (notesNeedUpload(notes, remoteNotes)) cloud.syncNotes(notes)
     }).catch(() => {})
   },
 

@@ -32,6 +32,24 @@ function mergeByUpdatedAt(localList, remoteList) {
   return Object.keys(map).map((k) => map[k])
 }
 
+function sameNotes(left, right) {
+  const byId = {}
+  ;(right || []).forEach((note) => { byId[note.id] = note })
+  if ((left || []).length !== (right || []).length) return false
+  return (left || []).every((note) => {
+    const other = byId[note.id]
+    return other &&
+      note.content === other.content &&
+      (note.createdAt || 0) === (other.createdAt || 0) &&
+      (note.updatedAt || 0) === (other.updatedAt || 0)
+  })
+}
+
+function mergeNotes(localNotes, remoteNotes) {
+  return mergeByUpdatedAt(localNotes, remoteNotes)
+    .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+}
+
 /** 云函数以 localId 存储业务主键，拉取后统一还原成本地的 id 字段。 */
 function normalizeRemoteList(list) {
   return (list || [])
@@ -46,7 +64,13 @@ function normalizeRemoteList(list) {
 function callFn(name, data) {
   return wx.cloud
     .callFunction({ name: name, data: data || {} })
-    .then((res) => res.result || {})
+    .then((res) => {
+      const result = res.result || {}
+      if (result.ok === false) {
+        throw new Error(result.reason || '云函数执行失败')
+      }
+      return result
+    })
 }
 
 /**
@@ -61,7 +85,7 @@ function syncAll() {
       return { ok: false, reason: 'not-logged-in' }
     }
     return pushAll()
-      .then(() => pullAndMerge())
+      .then(() => Promise.all([pullAndMerge(), pullMergeAndSyncNotes()]))
       .then(() => ({ ok: true }))
       .catch((err) => {
         console.warn('[sync] 同步失败', err)
@@ -112,6 +136,19 @@ function pullAndMerge() {
     const mergedIslands = mergeByUpdatedAt(storage.getIslands(), normalizeRemoteList(rIslands.islands))
     const mergedPhotos = mergeByUpdatedAt(storage.getPhotos(), normalizeRemoteList(rPhotos.photos))
     storage.replaceAll(mergedIslands, mergedPhotos)
+  })
+}
+
+/** 拉取随心记并按更新时间合并，合并后仅在必要时回推云端。 */
+function pullMergeAndSyncNotes() {
+  return pullNotes().then((remoteNotes) => {
+    const notes = mergeNotes(storage.getNotes(), remoteNotes)
+    storage.replaceNotes(notes)
+    if (sameNotes(notes, remoteNotes)) return { ok: true, skipped: true }
+    return syncNotes(notes).then((result) => {
+      if (!result.ok) throw new Error(result.reason || '随心记同步失败')
+      return result
+    })
   })
 }
 
@@ -166,5 +203,6 @@ module.exports = {
   syncProfile,
   pullProfile,
   syncNotes,
-  pullNotes
+  pullNotes,
+  pullMergeAndSyncNotes
 }

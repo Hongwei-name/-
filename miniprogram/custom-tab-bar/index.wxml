@@ -8,8 +8,7 @@
     bindtap="onTap"
   >
     <view class="tab-icon-wrap">
-      <view wx:if="{{item.type === 'profile'}}" class="profile-tab-icon"></view>
-      <text wx:else class="iconfont {{item.icon}} tab-icon"></text>
+      <image class="tab-icon" src="{{item.iconPath}}" mode="aspectFit" />
     </view>
     <text class="tab-text">{{item.text}}</text>
   </view>

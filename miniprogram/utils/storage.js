@@ -44,6 +44,14 @@ function writeRaw(key, val) {
   }
 }
 
+function isSameData(left, right) {
+  try {
+    return JSON.stringify(left) === JSON.stringify(right)
+  } catch (e) {
+    return false
+  }
+}
+
 function removeRaw(key) {
   try {
     wx.removeStorageSync(key)
@@ -129,6 +137,7 @@ function saveIsland(data) {
       remark: '',
       visited: false,
       visitedAt: null,
+      arrivedAt: null,
       createdAt: now,
       updatedAt: now
     },
@@ -283,8 +292,11 @@ function deleteNote(id) {
 }
 
 function replaceNotes(notes) {
-  write(KEYS.NOTES, Array.isArray(notes) ? notes : [])
+  const next = Array.isArray(notes) ? notes : []
+  if (isSameData(getNotes(), next)) return false
+  write(KEYS.NOTES, next)
   emit()
+  return true
 }
 
 /* ---------------- 用户资料 ---------------- */
@@ -377,9 +389,17 @@ function putBackDeleted(deleted) {
 
 /** 全量覆盖本地数据（云端拉取合并后使用） */
 function replaceAll(islands, photos) {
-  if (islands) write(KEYS.ISLANDS, islands)
-  if (photos) write(KEYS.PHOTOS, photos)
-  emit()
+  let changed = false
+  if (islands && !isSameData(getIslands(), islands)) {
+    write(KEYS.ISLANDS, islands)
+    changed = true
+  }
+  if (photos && !isSameData(getPhotos(), photos)) {
+    write(KEYS.PHOTOS, photos)
+    changed = true
+  }
+  if (changed) emit()
+  return changed
 }
 
 module.exports = {

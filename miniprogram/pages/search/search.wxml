@@ -60,7 +60,7 @@
         data-from="nearby"
         bindtap="onItemTap"
       >
-        <image wx:if="{{item.photoUrl}}" class="nearby-image" src="{{item.photoUrl}}" mode="aspectFill" />
+        <image class="nearby-image" src="{{item.photoUrl}}" mode="aspectFill" data-index="{{index}}" binderror="onNearbyImageError" />
         <view class="result-main">
           <view class="result-name">{{item.name}}</view>
           <view class="result-addr">{{item.address}}</view>

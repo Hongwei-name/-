@@ -5,16 +5,13 @@
  *  - 点击进入详情，支持编辑 / 删除
  */
 const storage = require('../../utils/storage')
-const cloud = require('../../utils/cloud')
 const util = require('../../utils/util')
 const { sortByDistance } = require('../../utils/distance')
 
 Page({
   data: {
     sortMode: 'time', // time | distance
-    islands: [],
-    cloudReady: false,
-    syncing: false
+    islands: []
   },
 
   onLoad() {
@@ -22,7 +19,6 @@ Page({
   },
 
   onShow() {
-    this.setData({ cloudReady: getApp().globalData.cloudReady })
     this.refresh()
   },
 
@@ -41,7 +37,7 @@ Page({
       const photos = storage.getPhotosByIsland(isl.id)
       return Object.assign({}, isl, {
         photoCount: photos.length,
-        visitedText: isl.visited ? '已去过' : '',
+        visitedText: isl.visited ? (isl.arrivedAt ? '已到达' : '已去过') : '',
         createdAtText: util.formatTime(isl.createdAt)
       })
     })
@@ -90,28 +86,8 @@ Page({
     })
   },
 
-  /** 手动触发云端同步备份 */
-  onSyncTap() {
-    if (this.data.syncing) return
-    if (!cloud.isAvailable()) {
-      util.toast('云开发未开通，数据仅保存在本地')
-      return
-    }
-    this.setData({ syncing: true })
-    cloud
-      .syncAll()
-      .then((res) => {
-        this.setData({ syncing: false })
-        if (res.ok) {
-          util.toast('云端备份完成', 'success')
-        } else {
-          util.toast('同步失败：' + (res.reason === 'not-logged-in' ? '未登录' : '网络异常'))
-        }
-      })
-  },
-
   goPhotoImport() {
-    wx.navigateTo({ url: '/pages/photo-import/photo-import' })
+    wx.navigateTo({ url: '/pages/photo-gallery/photo-gallery' })
   },
 
   goMap() {

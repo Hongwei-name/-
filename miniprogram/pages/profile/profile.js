@@ -2,6 +2,8 @@ const storage = require('../../utils/storage')
 const cloud = require('../../utils/cloud')
 const util = require('../../utils/util')
 
+const DEFAULT_AVATAR_URL = 'https://free.picui.cn/free/2026/08/18/6a83c33d794fc.png'
+
 Page({
   data: {
     profile: null,
@@ -13,13 +15,16 @@ Page({
     showProfileEditor: false,
     avatarError: false,
     draftNickName: '',
-    draftAvatarUrl: ''
+    draftAvatarUrl: '',
+    defaultAvatarUrl: DEFAULT_AVATAR_URL
   },
 
   onShow() {
     const tabBar = this.getTabBar && this.getTabBar()
     if (tabBar) tabBar.setData({ selected: 2, visible: true })
-    this.refresh()
+    const app = getApp()
+    const restored = app.restoreLoginSession ? app.restoreLoginSession() : Promise.resolve()
+    restored.then(() => this.refresh())
   },
 
   refresh() {
@@ -51,7 +56,7 @@ Page({
           profileFormReady: true,
           showProfileEditor: false,
           draftNickName: profile.nickName,
-          draftAvatarUrl: profile.avatarUrl
+          draftAvatarUrl: profile.avatarUrl || DEFAULT_AVATAR_URL
         })
       } else if ((localProfile.updatedAt || 0) > (remoteProfile.updatedAt || 0)) {
         cloud.syncProfile(localProfile)
@@ -64,7 +69,7 @@ Page({
     const profile = storage.getProfile()
     this.setData({
       draftNickName: profile ? profile.nickName : '',
-      draftAvatarUrl: profile ? profile.avatarUrl : ''
+      draftAvatarUrl: profile && profile.avatarUrl ? profile.avatarUrl : DEFAULT_AVATAR_URL
     })
   },
 
@@ -99,7 +104,12 @@ Page({
     getApp()
       .loginWithWechat()
       .then((openid) => {
-        this.setData({ authorizing: false, cloudReady: Boolean(openid) })
+        this.setData({
+          authorizing: false,
+          cloudReady: Boolean(openid),
+          islandCount: storage.getIslands().length,
+          photoCount: storage.getPhotos().length
+        })
         if (!openid) {
           util.toast('微信登录失败，请稍后重试')
           return
@@ -107,11 +117,23 @@ Page({
         return cloud.pullProfile().catch(() => null).then((remoteProfile) => {
           if (remoteProfile) {
             const profile = storage.replaceProfile(remoteProfile)
-            this.setData({ profile, profileFormReady: true, showProfileEditor: false, draftNickName: profile.nickName, draftAvatarUrl: profile.avatarUrl })
+            this.setData({
+              profile,
+              profileFormReady: true,
+              showProfileEditor: false,
+              draftNickName: profile.nickName,
+              draftAvatarUrl: profile.avatarUrl || DEFAULT_AVATAR_URL
+            })
             util.toast('微信登录成功', 'success')
           } else {
             const profile = storage.getProfile()
-            this.setData({ profile, profileFormReady: Boolean(profile), showProfileEditor: !profile, draftNickName: profile ? profile.nickName : '', draftAvatarUrl: profile ? profile.avatarUrl : '' })
+            this.setData({
+              profile,
+              profileFormReady: Boolean(profile),
+              showProfileEditor: !profile,
+              draftNickName: profile ? profile.nickName : '',
+              draftAvatarUrl: profile && profile.avatarUrl ? profile.avatarUrl : DEFAULT_AVATAR_URL
+            })
             util.toast(profile ? '微信登录成功' : '微信登录成功，请完善资料', 'success')
           }
         })
@@ -131,7 +153,7 @@ Page({
     this.setData({
       showProfileEditor: false,
       draftNickName: profile ? profile.nickName : '',
-      draftAvatarUrl: profile ? profile.avatarUrl : ''
+      draftAvatarUrl: profile && profile.avatarUrl ? profile.avatarUrl : DEFAULT_AVATAR_URL
     })
   },
 
@@ -165,38 +187,18 @@ Page({
   },
 
   goPhotos() {
-    wx.navigateTo({ url: '/pages/photo-import/photo-import' })
+    wx.navigateTo({ url: '/pages/photo-gallery/photo-gallery' })
   },
 
   goTour() {
     wx.navigateTo({ url: '/pages/tour/tour' })
   },
 
-  onSync() {
-    if (!cloud.isAvailable()) {
-      util.toast('云开发未开通，数据仅保存在本地')
-      return
-    }
-    wx.showLoading({ title: '同步中', mask: true })
-    Promise.all([cloud.syncAll(), cloud.syncProfile(storage.getProfile())]).then(([res, profileRes]) => {
-      wx.hideLoading()
-      if (res.ok && profileRes.ok) {
-        this.refresh()
-        util.toast('云端同步完成', 'success')
-      } else {
-        util.toast('同步失败，请检查网络')
-      }
-    }).catch(() => {
-      wx.hideLoading()
-      util.toast('同步失败，请检查网络')
-    })
-  },
-
   async onLogout() {
     const ok = await util.confirm('退出登录', '将清除本机头像、昵称、小岛、标点、照片和搜索历史。云端备份会保留，重新登录后恢复。')
     if (!ok) return
     this.setData({ authorizing: true })
-    wx.showLoading({ title: '正在备份', mask: true })
+    wx.showLoading({ title: '正在退出', mask: true })
     const [dataResult, profileResult, notesResult] = await Promise.all([
       cloud.syncAll(),
       cloud.syncProfile(storage.getProfile()),

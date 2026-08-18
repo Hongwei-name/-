@@ -6,7 +6,7 @@
       <view class="title-row">
         <text class="iconfont icon-island title-icon"></text>
         <text class="title">{{island.name}}</text>
-        <text wx:if="{{island.visited}}" class="visited-tag">已去过</text>
+        <text wx:if="{{island.visited}}" class="visited-tag">{{island.arrivedAt ? '已到达' : '已去过'}}</text>
         <text wx:if="{{photos.length}}" class="tag">照片 {{photos.length}}</text>
       </view>
       <view class="info-row">
