@@ -9,8 +9,32 @@
     markers="{{markers}}"
     polyline="{{polylines}}"
     bindtap="onMapTap"
+    bindpoitap="onMapPoiTap"
     bindmarkertap="onMarkerTap"
-  />
+    bindregionchange="onMapRegionChange"
+  >
+    <!-- 放大到街区级别后，在有照片的小岛 marker 上显示照片缩略图 -->
+    <block wx:for="{{photoCallouts}}" wx:key="markerId">
+      <cover-view
+        slot="callout"
+        marker-id="{{item.markerId}}"
+        class="map-photo-callout"
+        data-island-id="{{item.islandId}}"
+        catchtap="onPhotoCalloutTap"
+      >
+        <cover-view class="map-photo-callout-name">{{item.name}}</cover-view>
+        <cover-view class="map-photo-row">
+          <cover-image
+            wx:for="{{item.photos}}"
+            wx:key="id"
+            class="map-photo-thumb"
+            src="{{item.localPath}}"
+          />
+          <cover-view wx:if="{{item.moreCount}}" class="map-photo-more">+{{item.moreCount}}</cover-view>
+        </cover-view>
+      </cover-view>
+    </block>
+  </map>
 
   <view class="top-navigation">
     <top-nav title="行屿" large-inset="{{true}}" />
@@ -47,8 +71,24 @@
       <view class="panel-meta">
         照片 {{photoCount}} 张 · 标记于 {{activeIsland.createdAtText}} · 备注：{{activeIsland.remark || '无'}}
       </view>
+      <view wx:if="{{activeIsland.photos.length}}" class="island-photos">
+        <view class="island-photos-title">照片集</view>
+        <scroll-view scroll-x class="island-photo-scroll" enable-flex>
+          <view class="island-photo-row">
+            <image
+              wx:for="{{activeIsland.photos}}"
+              wx:key="id"
+              class="island-photo-thumb"
+              src="{{item.localPath}}"
+              mode="aspectFill"
+              data-index="{{index}}"
+              bindtap="previewIslandPhoto"
+            />
+          </view>
+        </scroll-view>
+      </view>
       <view class="panel-actions">
-        <button class="btn btn-primary act" bindtap="viewIslandDetail">查看详情</button>
+        <button class="btn btn-primary act" bindtap="viewIslandDetail">{{photoCount ? '查看照片集' : '查看详情'}}</button>
         <button class="btn btn-ghost act" bindtap="routeToIsland">路线规划</button>
         <button class="btn btn-ghost act" bindtap="editIsland">编辑</button>
         <button class="btn btn-danger act" bindtap="deleteIsland">删除</button>

@@ -9,6 +9,8 @@ const storage = require('../../utils/storage')
 const util = require('../../utils/util')
 
 const DEFAULT_SCALE = 17
+const PHOTO_CALLOUT_SCALE = 18
+const PHOTO_CALLOUT_LIMIT = 4
 
 Page({
   data: {
@@ -17,6 +19,7 @@ Page({
     longitude: 116.39747,
     scale: DEFAULT_SCALE,
     markers: [],
+    photoCallouts: [],
     polylines: [],
     locating: false,     // 定位中（右上角小型菊花）
     showPanel: false,
@@ -136,10 +139,16 @@ Page({
 
     // 已标记小岛（红色线性图钉 + 名称标签）
     const islands = storage.getIslands()
+    const photoCallouts = []
+    const showPhotoCallouts = Number(this.data.scale) >= PHOTO_CALLOUT_SCALE
     islands.forEach((isl, i) => {
       if (!isValidCoordinate(isl.lng, isl.lat)) return
-      markers.push({
-        id: 1000 + i,
+      const markerId = 1000 + i
+      const photos = storage
+        .getPhotosByIsland(isl.id)
+        .filter((photo) => photo && photo.localPath)
+      const marker = {
+        id: markerId,
         latitude: isl.lat,
         longitude: isl.lng,
         iconPath: '/images/marker-island.png',
@@ -157,7 +166,24 @@ Page({
           anchorX: -30,
           anchorY: -60
         }
-      })
+      }
+      if (showPhotoCallouts && photos.length) {
+        const previewPhotos = photos.slice(0, PHOTO_CALLOUT_LIMIT)
+        marker.customCallout = {
+          display: 'ALWAYS',
+          // customCallout 的偏移单位为 px，按卡片尺寸将中心对齐到 marker。
+          anchorX: -75,
+          anchorY: -62
+        }
+        photoCallouts.push({
+          markerId,
+          islandId: isl.id,
+          name: isl.name,
+          photos: previewPhotos,
+          moreCount: Math.max(photos.length - previewPhotos.length, 0)
+        })
+      }
+      markers.push(marker)
     })
 
     // 临时选点（蓝色线性图钉）
@@ -174,7 +200,7 @@ Page({
       })
     }
 
-    this.setData({ markers })
+    this.setData({ markers, photoCallouts })
   },
 
   setTabBarVisible(visible) {
@@ -188,23 +214,93 @@ Page({
   onMapTap(e) {
     const { longitude, latitude } = e.detail || {}
     if (!isValidCoordinate(longitude, latitude)) return
-    wx.showLoading({ title: '解析中', mask: true })
+    this.resolveMapPoint(longitude, latitude)
+  },
+
+  /** 点击地图底图上的店铺 / 景点名称（map 组件的 POI 专用事件） */
+  onMapPoiTap(e) {
+    const detail = e.detail || {}
+    const longitude = detail.longitude
+    const latitude = detail.latitude
+    if (!isValidCoordinate(longitude, latitude)) return
+    this.resolveMapPoint(longitude, latitude, {
+      name: detail.name || '所选位置',
+      address: detail.address || '',
+      id: detail.poiId || detail.id || ''
+    })
+  },
+
+  /** 地图缩放结束后，按街区级别切换照片缩略图气泡 */
+  onMapRegionChange(e) {
+    const detail = e.detail || {}
+    // 只接收用户手势结束事件；setData / moveToLocation 触发的 update
+    // 回调不能再次覆盖中心，否则地图会在缩放后跳回旧位置。
+    if (detail.type !== 'end' || detail.causedBy !== 'gesture') return
+    const nextScale = Number(detail.scale)
+    const nextLatitude = Number(detail.latitude)
+    const nextLongitude = Number(detail.longitude)
+    if (!Number.isFinite(nextScale)) return
+
+    const scaleChanged = nextScale !== this.data.scale
+    const centerChanged =
+      isValidCoordinate(nextLongitude, nextLatitude) &&
+      (nextLatitude !== this.data.latitude || nextLongitude !== this.data.longitude)
+    if (!scaleChanged && !centerChanged) return
+
+    const wasShowingPhotoCallouts = this.data.scale >= PHOTO_CALLOUT_SCALE
+    const willShowPhotoCallouts = nextScale >= PHOTO_CALLOUT_SCALE
+    const nextData = { scale: nextScale }
+    if (centerChanged) {
+      nextData.latitude = nextLatitude
+      nextData.longitude = nextLongitude
+    }
+    this.setData(nextData, () => {
+      // 缩放过程中不重建所有 marker，只在照片气泡需要显隐时刷新一次。
+      if (wasShowingPhotoCallouts !== willShowPhotoCallouts) this.buildMarkers()
+    })
+  },
+
+  /** 点击照片气泡直接进入对应小岛详情，查看完整照片集 */
+  onPhotoCalloutTap(e) {
+    const islandId = e.currentTarget.dataset.islandId
+    const island = storage.getIsland(islandId)
+    if (island) wx.navigateTo({ url: '/pages/island-detail/island-detail?id=' + island.id })
+  },
+
+  /** 解析地图点位；POI 点击时保留底图返回的名称作为兜底 */
+  resolveMapPoint(longitude, latitude, fallback) {
+    const hasFallback = Boolean(fallback)
+    const defaultPoint = Object.assign({
+      name: '所选位置',
+      address: '',
+      id: ''
+    }, fallback || {})
     amap
       .regeo(longitude, latitude)
       .then((info) => {
-        wx.hideLoading()
         const poi = info.pois && info.pois.length ? info.pois[0] : null
         this.showPoint({
           lng: longitude,
           lat: latitude,
-          name: (poi && poi.name) || info.formatted_address || '所选位置',
-          address: (poi && poi.address) || info.formatted_address || '',
-          id: (poi && poi.id) || '',
+          name: defaultPoint.name !== '所选位置' ? defaultPoint.name : ((poi && poi.name) || info.formatted_address || defaultPoint.name),
+          address: defaultPoint.address || (poi && poi.address) || info.formatted_address || '',
+          id: defaultPoint.id || (poi && poi.id) || '',
           nearbyPois: info.pois || []
         })
       })
       .catch((err) => {
-        wx.hideLoading()
+        if (hasFallback) {
+          // POI 点击即使无法联网，也要打开面板显示地图返回的名称。
+          this.showPoint({
+            lng: longitude,
+            lat: latitude,
+            name: defaultPoint.name,
+            address: defaultPoint.address,
+            id: defaultPoint.id
+          })
+          util.toast(err.message || '解析失败，已显示所选位置')
+          return
+        }
         util.toast(err.message || '解析失败，请检查网络')
       })
   },
@@ -277,12 +373,23 @@ Page({
       showPanel: true,
       activePoint: null,
       activeIsland: Object.assign({}, island, {
-        createdAtText: util.formatTime(island.createdAt)
+        createdAtText: util.formatTime(island.createdAt),
+        photos: photos.filter((photo) => photo && photo.localPath)
       }),
       photoCount: photos.length
     })
     this.setTabBarVisible(false)
     this.buildMarkers()
+  },
+
+  /** 预览当前小岛归集的全部本地照片 */
+  previewIslandPhoto(e) {
+    const photos = (this.data.activeIsland && this.data.activeIsland.photos) || []
+    const index = Number(e.currentTarget.dataset.index)
+    const current = photos[index]
+    if (!current || !current.localPath) return
+    const urls = photos.filter((photo) => photo && photo.localPath).map((photo) => photo.localPath)
+    wx.previewImage({ current: current.localPath, urls })
   },
 
   /** 面板打开期间小岛数据可能变化，同步刷新 */

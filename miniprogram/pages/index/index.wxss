@@ -12,6 +12,51 @@
   height: 100%;
 }
 
+/* 放大地图时显示在小岛 marker 上方的照片气泡 */
+.map-photo-callout {
+  width: 300rpx;
+  padding: 12rpx;
+  border: 1rpx solid #DCE9E8;
+  border-radius: 12rpx;
+  background: #FFFFFF;
+  box-shadow: 0 6rpx 18rpx rgba(21, 35, 43, 0.16);
+}
+
+.map-photo-callout-name {
+  max-width: 276rpx;
+  overflow: hidden;
+  color: #15232B;
+  font-size: 23rpx;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.map-photo-row {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.map-photo-thumb {
+  width: 62rpx;
+  height: 62rpx;
+  margin-right: 6rpx;
+  border-radius: 6rpx;
+}
+
+.map-photo-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62rpx;
+  height: 62rpx;
+  border-radius: 6rpx;
+  background: #EEF4F4;
+  color: #52616D;
+  font-size: 21rpx;
+}
+
 .top-navigation {
   position: absolute;
   top: 0;
@@ -149,6 +194,34 @@
   margin-top: 10rpx;
   font-size: 22rpx;
   color: #9AA3B2;
+}
+
+.island-photos {
+  margin-top: 18rpx;
+}
+
+.island-photos-title {
+  margin-bottom: 10rpx;
+  color: #52616D;
+  font-size: 23rpx;
+}
+
+.island-photo-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.island-photo-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.island-photo-thumb {
+  width: 112rpx;
+  height: 112rpx;
+  margin-right: 10rpx;
+  border-radius: 8rpx;
+  background: #E8F1F0;
 }
 
 .nearby {
